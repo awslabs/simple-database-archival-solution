@@ -121,11 +121,7 @@ The top level project structure follows a responsibility structure:
 
 ## Docker issues
 
-Build fails during a docker step due to `OSError: [Errno 28] No space left on device:` or something similar.
-
-Open docker desktop, click on `Images`, click on `Clean up`, check `Unused` and `Dangling`, then click `Remove`.
-
-or run from the command line: `docker image prune -a`
+Build fails during a docker step due to `OSError: [Errno 28] No space left on device:` or something similar. Open docker desktop, click on `Images`, click on `Clean up`, check `Unused` and `Dangling`, then click `Remove`. or run from the command line: `docker image prune -a`
 
 ## Contributing
 
