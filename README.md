@@ -81,6 +81,20 @@ npm run deploy -- -c admin_email="${YOUR_ADMINISTRATOR_EMAIL}"
  1. Check the Cloudformation sdas stack outputs value of WebAppCloudFrontDistributionDomainNameXYXY
  1. Open your web browser, enter the web address obtained in step 2, and login as `admin` and the temporary password provided via email
 
+## Developer Setup
+
+1. Add example.com to your hosts file.  This is needed to support CORS restrictions for authenticated requests during development.
+
+On mac/linux, edit /etc/hosts and add the following line:
+
+```
+127.0.0.1       example.com
+```
+
+2. Set the api gateway url for the shared development environment
+
+After deployment of the shared development environment, edit the `.env.development` file and update the `REACT_APP_API_URL` environment variable to the ApiGatewayUrl.  This only needs to be done once.  
+
 ## Using SDAS
 
 ### 1. Start and Discover
@@ -146,10 +160,6 @@ The top level project structure follows a responsibility structure:
 - `/web-app` - contains the SPA web client for the application
 - `/functions` - contains the lambda functions not associated with APIs
 - `/step-functions` - contains the lambda functions for AWS Step Functions
-
-## Demo and Workshop
-
-Checkout the [SDAS workshop](https://amazon.com) for detailed walkthrough
 
 ## Troubleshooting
 
