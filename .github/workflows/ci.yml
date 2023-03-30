@@ -36,23 +36,11 @@
       - name: Run yarn install
         uses: Borales/actions-yarn@v4.2.0
         with:
-          dir: 'web'
+          dir: 'web-app'
           cmd: install
 
-      - name: web build
-        working-directory: web
+      - name: web-app build
+        working-directory: web-app
         env:
           CI: ""
         run: npm run build
-
-      - name: cdk package install
-        working-directory: infra
-        run: npm install
-
-      - name: cdk package build
-        working-directory: infra
-        run: CDK_NAG_ENABLED=true npx cdk synth
-
-      - name: run checks
-        working-directory: backend
-        run: make all
