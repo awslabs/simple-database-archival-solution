@@ -15,6 +15,8 @@
         "ace-builds": "^1.13.0",
         "aws-amplify": "^5.0.12",
         "axios": "^0.27.2",
+        "moment": "^2.29.4",
+        "moment-timezone": "^0.5.42",
         "react": "^17.0.2",
         "react-dom": "^17.0.2",
         "react-moment": "^1.1.2",
