@@ -71,7 +71,7 @@ To deploy run the following command.
 # address of your administrator. An email containing your password 
 # for signing in will be sent to that address.
 # Execute this command from the root of the cloned repository.
-# It will take approximately 106 mins for the stack to be deployed.
+# It will take approximately 10 mins for the stack to be deployed.
 npm run deploy -- -c admin_email="${YOUR_ADMINISTRATOR_EMAIL}"
 ```
 
@@ -145,10 +145,8 @@ By enabling Amazon S3 Object Lock, users can ensure that their archived data is 
 To destroy the dev environment, run:
 
 ```bash 
-# From the deploy directory
-# Replace ${BRANCH_NAME} with your branch name, for example:
-# cdk destroy main
-cdk destroy ${BRANCH_NAME}
+# Execute this command from the root of the cloned repository.
+npm run destroy
 ```
 
 ## Development
