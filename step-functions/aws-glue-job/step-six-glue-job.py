@@ -21,7 +21,6 @@ REGION = os.environ["REGION"]
 
 client = boto3.client('glue', region_name=REGION, config=Config(
     connect_timeout=5, read_timeout=60, retries={'max_attempts': 20}))
-# client = boto3.client('glue', region_name='us-east-1')
 dynamodb = boto3.resource('dynamodb', region_name=REGION)
 ssm = boto3.client('ssm')
 
