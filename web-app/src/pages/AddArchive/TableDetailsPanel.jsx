@@ -58,6 +58,7 @@ export default function TableDetailsPanel({
         await API.post("api", "api/archive/source/get-schema", databaseConnectionState)
             .then(response => {
                 setGettingSchemaFailed(false)
+                console.log(response)
                 const tableChunks = sliceIntoChunks(response.tables, 4)
                 setTables(tableChunks);
                 setPageCount((response.tables.length / 4).toFixed())
@@ -105,8 +106,14 @@ export default function TableDetailsPanel({
                                                 sortingField: "name"
                                             },
                                             {
+                                                id: "origin_type",
+                                                header: "Source Data Type",
+                                                cell: item => item.origin_type || "",
+                                                sortingField: "origin_type"
+                                            },
+                                            {
                                                 id: "alt",
-                                                header: "Data Type",
+                                                header: "Target Data Type",
                                                 cell: item => item.value || "",
                                                 sortingField: "alt"
                                             },

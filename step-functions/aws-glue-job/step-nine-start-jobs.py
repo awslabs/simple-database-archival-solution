@@ -14,9 +14,18 @@ permissions and limitations under the License.
 """
 
 import boto3
+from botocore.config import Config
 import json
+import os
 
-client = boto3.client("glue", region_name="us-east-1")
+REGION = os.environ["REGION"]
+
+client = boto3.client(
+    "glue",
+    region_name=REGION,
+    config=Config(connect_timeout=5, read_timeout=60,
+                  retries={"max_attempts": 20}),
+)
 dynamodb = boto3.resource("dynamodb", region_name="us-east-1")
 ssm = boto3.client("ssm")
 
@@ -26,8 +35,10 @@ def lambda_handler(event, context):
     bucketParameter = ssm.get_parameter(
         Name="/job/s3-bucket-table-data", WithDecryption=True
     )
-    parameter = ssm.get_parameter(Name="/archive/dynamodb-table", WithDecryption=True)
-    temp_dir_parameter = ssm.get_parameter(Name="/glue/temp-dir", WithDecryption=True)
+    parameter = ssm.get_parameter(
+        Name="/archive/dynamodb-table", WithDecryption=True)
+    temp_dir_parameter = ssm.get_parameter(
+        Name="/glue/temp-dir", WithDecryption=True)
 
     table = dynamodb.Table(parameter["Parameter"]["Value"])
     temp_dir_parameter_value = temp_dir_parameter["Parameter"]["Value"]
