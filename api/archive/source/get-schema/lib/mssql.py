@@ -31,6 +31,28 @@ else:
 def convert_schema(type):
     if "char" in type:
         return "string"
+
+    elif "datetime" == type:
+        return "timestamp"
+
+    elif "date" == type:
+        return "date"
+
+    elif "money" == type:
+        return "decimal(19,4)"
+
+    elif "smallmoney" == type:
+        return "decimal(10,4)"
+
+    elif "geography" == type:
+        return "binary"
+
+    elif "numeric" == type:
+        return "decimal(38,6)"
+
+    elif "hierarchyid" == type:
+        return "binary"
+
     elif "int" in type:
         if type == "bigint":
             return "long"
@@ -38,30 +60,25 @@ def convert_schema(type):
             return "smallint"
         else:
             return "int"
-    elif "date" in type:
-        return "date"
-    elif "decimal" in type:
+
+    elif "decimal" == type:
         return "decimal"
-    elif "money" in type:
-        return "decimal"
-    elif "bit" in type:
-        return "tinyint"
-    elif "uniqueidentifier" in type:
+
+    elif "bit" == type:
+        return "boolean"
+
+    elif "uniqueidentifier" == type:
         return "string"
-    elif "xml" in type:
+
+    elif "xml" == type:
         return "string"
-    elif "xml" in type:
-        return "string"
-    elif "numeric" in type:
-        return "int"
-    elif "time" in type:
+
+    elif "time" == type:
         return "timestamp"
-    elif "varbinary" in type:
+
+    elif "varbinary" == type:
         return "binary"
-    elif "geography" in type:
-        return "string"
-    elif "hierarchyid" in type:
-        return "string"
+
     else:
         return "string"
 
