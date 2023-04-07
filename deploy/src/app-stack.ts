@@ -987,6 +987,7 @@ export class AppStack extends cdk.Stack {
                 index: "step-six-glue-job.py",
                 entry: "../step-functions/aws-glue-job",
                 timeout: cdk.Duration.minutes(5),
+                memorySize: 1024,
                 environment: {
                     REGION: awsRegion,
                 },
