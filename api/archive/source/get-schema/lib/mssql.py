@@ -31,6 +31,9 @@ else:
 def convert_schema(type):
     if "char" in type:
         return "string"
+      
+    elif "image" == type:
+        return "binary"
 
     elif "datetime" == type:
         return "timestamp"
