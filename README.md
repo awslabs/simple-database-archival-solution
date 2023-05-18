@@ -11,7 +11,7 @@ Simple Database Archiving Solution (SDAS) is an open source solution, which you 
 
 As businesses accumulate more and more data over time, the need for effective database archiving solutions has become increasingly important, for example moving older, rarely used data to an archive. Businesses can reduce the size of their active databases, which can improve performance and reduce storage costs. Archiving also helps organizations meet legal and regulatory requirements for data retention, as well as ensure that important data is available for future use and discovery, if necessary. Out of the box, SDAS provides the following key features:
 
-* Support for Oracle, Microsoft SQL Server, MySQL or  or PostgreSQL
+* Support for Oracle, Microsoft SQL Server, MySQL or PostgreSQL
 * Identify the data type and table schema 
 * Validate the data on the target after the archiving process has completed
 * Ability to configure WORM (“Write Once Read Many”) 
