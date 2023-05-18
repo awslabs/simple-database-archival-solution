@@ -24,7 +24,7 @@ As businesses accumulate more and more data over time, the need for effective da
 ## Give SDAS a try!
 1. Install the Simple Database Archival Solution in your AWS Account.
 2. Send any issues, improvements, or suggestions to us at our GitHub page.
-3. To help you get started, we have also published a [self-guided worksho](https://catalog.us-east-1.prod.workshops.aws/workshops/6f0b8cb6-7b0a-4908-abb9-52a588dc621a/en-US) that walks through the installation and core features of SDAS. Thank you to James Gaines for their support in building the workshop.
+3. To help you get started, we have also published a [self-guided worksho](https://catalog.us-east-1.prod.workshops.aws/workshops/6f0b8cb6-7b0a-4908-abb9-52a588dc621a/en-US) that walks through the installation and core features of SDAS.
 
 ## Architecture
 
@@ -171,7 +171,7 @@ The top level project structure follows a responsibility structure:
 ## Data Type Conversions
 
 ### PostgreSQL Data Type Conversions
-This section covers data type conversions that SDAS processed between PostgreSQL and Athena databases.
+This section covers data type conversions that SDAS processes between PostgreSQL and Athena databases.
 
 | Source Data Type                    | Supported? | SDAS Data Type |
 |-------------------------------------|------------|-------------------------------|
