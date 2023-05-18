@@ -282,7 +282,18 @@ export default function DatabaseSettingsPanel({
                                 type="number"
                                 value={archivePanelData.databasePort}
                                 ariaRequired={true}
-                                placeholder=""
+                                placeholder={
+                                    databaseEngine === "oracle" ? "1521"
+                                        : databaseEngine === "mysql"
+                                            ? "3306"
+                                            : databaseEngine === "mssql"
+                                                ? "1433"
+                                                : databaseEngine === "postgresql"
+                                                    ? "5432"
+                                                    : ""
+
+
+                                }
                                 onChange={({ detail: { value } }) =>
                                     onChange("databasePort", value)
                                 }
