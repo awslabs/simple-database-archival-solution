@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 1.1.0 (2023-04-12)
+
+- Added support for PostgreSQL
+
+### Features
+
+- Added Microsoft SQL data types that where not supported ([9685e35](https://github.com/awslabs/simple-database-archival-solution/commit/9685e354d1f1f42274e66e2467d4e7324e31b156))
+
+- Update LICENSE ([3f3d0f6](https://github.com/awslabs/simple-database-archival-solution/commit/30fbd0a18a60c84777c83ec8505dc095aeec1faa))
+
 ## 1.0.2 (2023-04-12)
 
 ### Bug Fixes

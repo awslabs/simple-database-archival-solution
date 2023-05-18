@@ -170,7 +170,45 @@ def lambda_handler(event, context):
                     }
                 },
             )
+            
+        elif event["database_engine"] == "postgresql":
+            response = client.start_job_run(
+                JobName=f'{event["archive_id"]}-{event["database"]}-{event["table"]}',
+                Arguments={
+                    "--job-language": "python",
+                    "--job-bookmark-option": "job-bookmark-disable",
+                    "--TempDir": f"s3://{temp_dir_parameter_value}/temporary/",
+                    "--enable-job-insights": "false",
+                    "--TABLE": event["table"],
+                    "--BUCKET": bucketParameter["Parameter"]["Value"],
+                    "--DATABASE": event["database"],
+                    "--ARCHIVE_ID": event["archive_id"],
+                    "--CONNECTION": f'{event["archive_id"]}-{event["database"]}-connection',
+                    "--MAPPINGS": json.dumps(mappings),
+                },
+                Timeout=2880,
+                WorkerType=dynamodb_response["Item"]["configuration"]["glue"][
+                    "glue_worker"
+                ],
+                NumberOfWorkers=int(
+                    dynamodb_response["Item"]["configuration"]["glue"]["glue_capacity"]
+                ),
+            )
 
+            table.update_item(
+                Key={"id": event["archive_id"]},
+                UpdateExpression=f'set jobs.{response["JobRunId"]} = :newJob',
+                ExpressionAttributeValues={
+                    ":newJob": {
+                        "job_name": f'{event["archive_id"]}-{event["database"]}-{event["table"]}',
+                        "job_run_id": response["JobRunId"],
+                        "state": "RUNNING",
+                        "timestamp": response["ResponseMetadata"]["HTTPHeaders"][
+                            "date"
+                        ],
+                    }
+                },
+            )
     except Exception as ex:
         print(ex)
         print("error")

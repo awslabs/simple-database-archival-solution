@@ -11,7 +11,7 @@ Simple Database Archiving Solution (SDAS) is an open source solution, which you 
 
 As businesses accumulate more and more data over time, the need for effective database archiving solutions has become increasingly important, for example moving older, rarely used data to an archive. Businesses can reduce the size of their active databases, which can improve performance and reduce storage costs. Archiving also helps organizations meet legal and regulatory requirements for data retention, as well as ensure that important data is available for future use and discovery, if necessary. Out of the box, SDAS provides the following key features:
 
-* Support for Oracle, MySQL or Microsoft SQL Server
+* Support for Oracle, Microsoft SQL Server, MySQL or  or PostgreSQL
 * Identify the data type and table schema 
 * Validate the data on the target after the archiving process has completed
 * Ability to configure WORM (“Write Once Read Many”) 
@@ -20,6 +20,11 @@ As businesses accumulate more and more data over time, the need for effective da
 * Perform various data validation and integrity checks
 * Make it simple for operation to ingest and archive database
 * Ability to preview data archived in Amazon S3
+
+## Give SDAS a try!
+1. Install the Simple Database Archival Solution in your AWS Account.
+2. Send any issues, improvements, or suggestions to us at our GitHub page.
+3. To help you get started, we have also published a [self-guided worksho](https://catalog.us-east-1.prod.workshops.aws/workshops/6f0b8cb6-7b0a-4908-abb9-52a588dc621a/en-US) that walks through the installation and core features of SDAS. Thank you to James Gaines for their support in building the workshop.
 
 ## Architecture
 
@@ -83,7 +88,7 @@ npm run deploy -- -c admin_email="${YOUR_ADMINISTRATOR_EMAIL}"
  1. Check the Cloudformation sdas stack outputs value of WebAppCloudFrontDistributionDomainNameXYXY
  1. Open your web browser, enter the web address obtained in step 2, and login as `admin` and the temporary password provided via email
 
-## Developer Setup
+## 3. Developer Setup
 
 1. Add example.com to your hosts file.  This is needed to support CORS restrictions for authenticated requests during development.
 
@@ -97,9 +102,9 @@ On mac/linux, edit /etc/hosts and add the following line:
 
 After deployment of the shared development environment, edit the `.env.development` file and update the `REACT_APP_API_URL` environment variable to the ApiGatewayUrl.  This only needs to be done once.  
 
-## Using SDAS
+## 4. Using SDAS
 
-### 1. Start and Discover
+### 4.1. Start and Discover
 To start the archiving process, gather essential connection information, including the database name, database URI, and credentials. With this information, SDAS attempts to connect to the database, and if successful, proceeds to the next step. In the next step, SDAS collects the tables and associated schema from the target database to be archived.
 
 ![SDAS Add Archive](./images/add_archive.png)
@@ -110,7 +115,7 @@ Once the data type and schema of the table have been identified, SDAS can begin 
 
 ![SDAS Source Database Scanning](./images/source_scan.png)
 
-### 2. Archive
+### 4.2. Archive
 The archive phase of SDAS is a critical step in the process of archiving data to Amazon S3. SDAS is designed to automatically archive data from Oracle, Microsoft SQL, and MySQL databases, providing flexibility and versatility for customers. The archiving process can be triggered either manually or automatically based on a defined schedule, enabling customers to customize the solution to their specific needs.
 
 ![Archive Database](./images/archive.png)
@@ -119,7 +124,7 @@ At the core of the archive phase is AWS Glue, a fully managed Extract, Transform
 
 Once the data is transferred to Amazon S3, it is stored as Parquet files, a columnar storage format that is optimized for query performance and storage efficiency. This makes the archived data easy to query, for instance using Amazon Athena, a serverless query service that allows customers to query data stored in S3 using SQL. By leveraging the power of Amazon Athena, customers can easily perform ad-hoc analysis on their archived data without the need for complex setup or maintenance.
 
-### 3. Data Validation
+### 4.3. Data Validation
 The data validation phase of SDAS is a critical step that ensures the accuracy and completeness of the archived data. After the archival process is complete, SDAS automatically triggers a validation process to ensure that the data has been properly transferred and stored in Amazon S3.
 
 The validation process begins by comparing the source data to the archived data stored in Amazon S3, using a variety of techniques such as checksums, and data sampling. This process ensures that the data has been accurately transferred and stored, with no data loss or corruption. SDAS does not perform validation on the source data, only on the data stored in Amazon S3.
@@ -128,21 +133,21 @@ If any discrepancies are detected, SDAS provides you with the ability to identif
 
 ![SDAS Validation](./images/validate.png)
 
-### 4. Access to Archived Databases
+### 5.4. Access to Archived Databases
 Access to the archived databases in SDAS is limited to authorized users who can access them through the Amazon Athena Console. To explore and visualize the data using Business Intelligence tools, users can download, install, and configure either an ODBC (Open Database Connectivity) or JDBC (Java Database Connectivity) driver to connect to Amazon Athena. 
 
 SDAS also includes a preview mode through the console, which allows users to quickly view the database that has been archived without the need for additional drivers or tools. This preview mode provides users with a quick and easy way to assess the quality and completeness of the archived data before proceeding with further analysis or querying. 
 
 ![SDAS Data Access](./images/access.png)
 
-### 5. Object Lock
+### 5.5. Object Lock
 SDAS includes a powerful feature that enables users to enable Amazon S3 Object Lock, a feature that allows objects to be stored using a WORM (Write Once, Read Many) model. This feature is designed for use in scenarios where it is critical that data is not modified or deleted after it has been written.
 
 By enabling Amazon S3 Object Lock, users can ensure that their archived data is fully protected from accidental or malicious deletion or modification. This feature provides a powerful layer of security that helps to prevent data loss or corruption, ensuring that the archived data remains complete and accurate for future analysis and querying.
 
 ![SDAS Object Lock](./images/object_lock.png)
 
-## Destroy
+## 6. Destroy
 
 To destroy the dev environment, run:
 
@@ -151,7 +156,7 @@ To destroy the dev environment, run:
 npm run destroy
 ```
 
-## Development
+## 7. Development
 
 The top level project structure follows a responsibility structure:
 
@@ -160,6 +165,57 @@ The top level project structure follows a responsibility structure:
 - `/web-app` - contains the SPA web client for the application
 - `/functions` - contains the lambda functions not associated with APIs
 - `/step-functions` - contains the lambda functions for AWS Step Functions
+
+---
+
+## Data Type Conversions
+
+### PostgreSQL Data Type Conversions
+This section covers data type conversions that SDAS processed between PostgreSQL and Athena databases.
+
+| Source Data Type                    | Supported? | SDAS Data Type |
+|-------------------------------------|------------|-------------------------------|
+| bigint                              | Y          | bigint                        |
+| bigserial                           | Y          | int                           |
+| bit [ (n) ]                         | Y          | string                        |
+| bit varying [ (n) ]                 | Y          | string                        |
+| boolean                             | Y          | boolean                       |
+| box                                 | Y          | string                        |
+| bytea                               | Y          | string                        |
+| character varying [ (n) ]           | Y          | string                        |
+| cidr                                | Y          | string                        |
+| circle                              | Y          | string                        |
+| date                                | Y          | date                          |
+| double precision                    | Y          | decimal(38,6)                 |
+| inet                                | Y          | string                        |
+| integer                             | Y          | int                           |
+| interval [ fields ] [ (p) ]         | Y          | string                        |
+| json                                | Y          | string                        |
+| jsonb                               | Y          | string                        |
+| lseg                                | Y          | string                        |
+| macaddr                             | Y          | string                        |
+| macaddr8                            | Y          | string                        |
+| money                               | Y          | decimal(19,4)                 |
+| numeric                             | Y          | int                           |
+| path                                | Y          | string                        |
+| pg_lsn                              | Y          | string                        |
+| pg_snapshot                         | Y          | string                        |
+| point                               | Y          | string                        |
+| polygon                             | Y          | string                        |
+| real                                | Y          | decimal(19,4)                 |
+| smallint                            | Y          | int                           |
+| smallserial                         | Y          | int                           |
+| serial                              | Y          | int                           |
+| text                                | Y          | string                        |
+| time [ (p) ]                        | Y          | string                        |
+| time [ (p) ] with time zone         | Y          | string                        |
+| timestamp [ (p) ]                   | Y          | timestamp                     |
+| timestamp [ (p) ] with time zone    | Y          | timestamp                     |
+| tsquery                             | Y          | string                        |
+| tsvector                            | Y          | string                        |
+| txid_snapshot                       | Y          | string                        |
+| uuid                                | Y          | string                        |
+| xml                                 | Y          | string                        |
 
 ## Troubleshooting
 

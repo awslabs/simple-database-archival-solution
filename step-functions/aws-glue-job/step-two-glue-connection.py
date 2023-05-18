@@ -115,6 +115,28 @@ def lambda_handler(event, context):
                         }
                     }
                 )
+            elif dynamodb_response["Item"]["database_engine"] == "postgresql":
+                glue_client.create_connection(
+                    ConnectionInput={
+                        'Name': f'{dynamodb_response["Item"]["id"]}-{dynamodb_response["Item"]["database"]}-connection',
+                        'Description': f'Connection for archive ID: {dynamodb_response["Item"]["id"]}',
+                        'ConnectionType': 'JDBC',
+                        'ConnectionProperties': {
+                            'USERNAME': dynamodb_response["Item"]["username"],
+                            'JDBC_ENFORCE_SSL': 'false',
+                            'PASSWORD': secret_value["SecretString"],
+                            'JDBC_CONNECTION_URL': f'jdbc:postgresql://{dynamodb_response["Item"]["hostname"]}:{dynamodb_response["Item"]["port"]}/{dynamodb_response["Item"]["database"]}'
+                        },
+                        'PhysicalConnectionRequirements': {
+                            'SubnetId': SUBNET_ID,
+                            'SecurityGroupIdList': [
+                                RDS_SECURITY_GROUP,
+                                VPC_DEFAULT_SECURITY_GROUP,
+                            ],
+                            'AvailabilityZone': AVAILABILITY_ZONE
+                        }
+                    }
+                )
         except:
             table.update_item(
                 Key={'id': event["archive_id"]},

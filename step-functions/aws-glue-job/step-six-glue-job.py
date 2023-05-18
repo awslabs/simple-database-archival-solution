@@ -106,6 +106,30 @@ def lambda_handler(event, context):
                     ]
                 }
             )
+        elif event["database_engine"] == "postgresql":
+            response = client.create_job(
+                Name=f'{event["archive_id"]}-{event["database"]}-{event["table"]}',
+                Role=aws_glue_role["Parameter"]["Value"],
+                Command={
+                    'Name': 'glueetl',
+                    'ScriptLocation': f's3://{bucket_parm["Parameter"]["Value"]}/scripts/postgresql-1-0-0.py',
+                    'PythonVersion': '3'
+                },
+                DefaultArguments={
+                    '--TempDir': f's3://{temp_glue_bucket_parm["Parameter"]["Value"]}/temp/',
+                    '--job-bookmark-option': 'job-bookmark-disable',
+                    '--disable-proxy-v2': 'true'
+                },
+                MaxRetries=0,
+                GlueVersion='3.0',
+                NumberOfWorkers=int(event["glue_capacity"]),
+                WorkerType=event["glue_worker"],
+                Connections={
+                    'Connections': [
+                        f'{event["archive_id"]}-{event["database"]}-connection',
+                    ]
+                }
+            )
 
     except Exception as ex:
         print(ex)
