@@ -20,6 +20,7 @@ import traceback
 from lib import mysql
 from lib import mssql
 from lib import oracle
+from lib import postgresql
 
 # region Logging
 
@@ -118,6 +119,19 @@ def lambda_handler(event, context):
             logger.error(traceback.format_exc())
             return build_response(500, "Server Error")
 
+    elif database_engine == "postgresql":
+        connection = postgresql.Connection(hostname,
+                                      port,
+                                      username,
+                                      password,
+                                      database,)
+        try:
+            connected = connection.testConnection()
+            response = {"connected": connected}
+            return build_response(200, json.dumps(response))
+        except Exception as ex:
+            logger.error(traceback.format_exc())
+            return build_response(500, "Server Error")
 
 if __name__ == "__main__":
 

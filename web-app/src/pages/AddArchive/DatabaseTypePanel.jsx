@@ -31,6 +31,7 @@ export default function DatabaseTypePanel({ databaseEngine,
         >
             <FormField
                 stretch={true}
+                
             >
                 <Tiles
                     items={[
@@ -54,8 +55,16 @@ export default function DatabaseTypePanel({ databaseEngine,
                             description:
                                 "Microsoft SQL Server is a relational database management system developed by Microsoft.",
                             image: <img height="100px" src={require("./mssql.png")} alt="Microsoft SQL Server" aria-hidden="true" />,
+                        },
+                        {
+                            value: "postgresql",
+                            label: "PostgreSQL",
+                            description:
+                                "PostgreSQL has become the preferred open source relational database for many developers.",
+                            image: <img height="100px" src={require("./postgresql.png")} alt="Microsoft SQL Server" aria-hidden="true" />,
                         }
                     ]}
+                    columns={3}
                     value={databaseEngine}
                     onChange={(e) => setDatabaseEngine(e.detail.value)}
                 />
