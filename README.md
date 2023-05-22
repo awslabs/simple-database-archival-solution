@@ -26,7 +26,7 @@ As businesses accumulate more and more data over time, the need for effective da
 
 1. Install the Simple Database Archival Solution in your AWS Account.
 2. Send any issues, improvements, or suggestions to us at our GitHub page.
-3. To help you get started, we have also published a [self-guided worksho](https://catalog.us-east-1.prod.workshops.aws/workshops/6f0b8cb6-7b0a-4908-abb9-52a588dc621a/en-US) that walks through the installation and core features of SDAS.
+3. To help you get started, we have also published a [self-guided workshop](https://catalog.us-east-1.prod.workshops.aws/workshops/6f0b8cb6-7b0a-4908-abb9-52a588dc621a/en-US) that walks through the installation and core features of SDAS.
 
 ## Architecture
 
