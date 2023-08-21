@@ -28,10 +28,7 @@ const account =
     app.node.tryGetContext("account") ||
     process.env.CDK_DEPLOY_ACCOUNT ||
     process.env.CDK_DEFAULT_ACCOUNT;
-const region =
-    app.node.tryGetContext("region") ||
-    process.env.CDK_DEPLOY_REGION ||
-    process.env.CDK_DEFAULT_REGION;
+const region = 'us-east-1';
 
 // Deploy Waf for CloudFront in us-east-1
 const cfWafStackName = stackName + "-waf";

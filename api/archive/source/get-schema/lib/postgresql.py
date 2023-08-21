@@ -30,6 +30,9 @@ else:
 
 def convert_schema(type):
 
+    logger.info("convert_schema")
+    logger.info(type)
+
     if "bigint" == type:
         return "bigint"
     elif "bigserial" == type:
@@ -97,6 +100,8 @@ def convert_schema(type):
     elif "time" in type:
         return "string"
     elif "timestamp" in type:
+        return "timestamp"
+    elif "timestamp with time zone" in type:
         return "timestamp"
     elif "tsquery" in type:
         return "string"
