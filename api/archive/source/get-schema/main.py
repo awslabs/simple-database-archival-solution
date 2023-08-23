@@ -68,6 +68,7 @@ def lambda_handler(event, context):
     username = body["username"]
     password = body["password"]
     database = body["database"]
+    schema = body["schema"]
     database_engine = body["database_engine"]
     
     if database_engine == "oracle":
@@ -129,7 +130,8 @@ def lambda_handler(event, context):
                                     port,
                                     username,
                                     password,
-                                    database,)
+                                    database,
+                                    schema,)
         
         try:
             tables = connection.get_schema()
