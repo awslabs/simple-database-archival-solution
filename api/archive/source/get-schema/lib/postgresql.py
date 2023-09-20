@@ -110,6 +110,8 @@ def convert_schema(type):
         return "string"
     elif "xml" in type:
         return "string"
+    else:
+        return "string"
 
 
 class Connection:
