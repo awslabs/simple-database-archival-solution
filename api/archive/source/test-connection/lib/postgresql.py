@@ -16,12 +16,13 @@ permissions and limitations under the License.
 import psycopg2
 
 class Connection:
-    def __init__(self, hostname, port, username, password, database):
+    def __init__(self, hostname, port, username, password, database, schema = 'public'):
         self.host = hostname
         self.port = port
         self.user = username
         self.password = password
         self.dbname = database
+        self.schema = schema
 
     def testConnection(self):
         
@@ -32,9 +33,10 @@ class Connection:
                 port=self.port,
                 user=self.user,
                 password=self.password,
-                dbname=self.dbname)
+                dbname=self.dbname,
+                options="-c search_path=dbo,{schema}".format(schema=self.schema,),)
             cursor = connection.cursor()
-            cursor.execute("SELECT table_name FROM information_schema.tables WHERE table_schema='public' AND table_type='BASE TABLE'")
+            cursor.execute("SELECT table_name FROM information_schema.tables WHERE table_schema='{schema}' AND table_type='BASE TABLE'".format(schema=self.schema))
             cursor.fetchall()
             cursor.close()
 
