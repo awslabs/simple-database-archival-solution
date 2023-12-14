@@ -101,7 +101,13 @@ On mac/linux, edit /etc/hosts and add the following line:
 
 2. Set the api gateway url for the shared development environment
 
-After deployment of the shared development environment, edit the `.env.development` file and update the `REACT_APP_API_URL` environment variable to the ApiGatewayUrl. This only needs to be done once.
+After deployment of the shared development environment, create a `.env.development` file in the web-app folder. Replace `{REACT_APP_API_URL}` to your ApiGatewayUrl, include the trailing slash. This only needs to be done once.
+
+```bash
+HOST=example.com
+REACT_APP_API_URL=https://{REACT_APP_API_URL}/
+```
+
 
 ## 4. Using SDAS
 
@@ -138,7 +144,7 @@ If any discrepancies are detected, SDAS provides you with the ability to identif
 
 ![SDAS Validation](./images/validate.png)
 
-### 5.4. Access to Archived Databases
+### 4.4. Access to Archived Databases
 
 Access to the archived databases in SDAS is limited to authorized users who can access them through the Amazon Athena Console. To explore and visualize the data using Business Intelligence tools, users can download, install, and configure either an ODBC (Open Database Connectivity) or JDBC (Java Database Connectivity) driver to connect to Amazon Athena.
 
@@ -146,7 +152,7 @@ SDAS also includes a preview mode through the console, which allows users to qui
 
 ![SDAS Data Access](./images/access.png)
 
-### 5.5. Object Lock
+### 4.5. Object Lock
 
 SDAS includes a powerful feature that enables users to enable Amazon S3 Object Lock, a feature that allows objects to be stored using a WORM (Write Once, Read Many) model. This feature is designed for use in scenarios where it is critical that data is not modified or deleted after it has been written.
 
@@ -154,7 +160,7 @@ By enabling Amazon S3 Object Lock, users can ensure that their archived data is 
 
 ![SDAS Object Lock](./images/object_lock.png)
 
-## 6. Destroy
+## 5. Destroy
 
 To destroy the dev environment, run:
 
@@ -163,7 +169,7 @@ To destroy the dev environment, run:
 npm run destroy
 ```
 
-## 7. Development
+## 6. Development
 
 The top level project structure follows a responsibility structure:
 
