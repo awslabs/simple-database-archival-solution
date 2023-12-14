@@ -81,54 +81,34 @@ export default function DatabaseSettingsPanel({
 
     const testConnection = async (e) => {
         setDatabaseConnecting(true);
+
         const myInit = {
             body: {
                 database_engine: databaseEngine,
-                oracle_owner:
-                    archivePanelData.oracleOwner === undefined
-                        ? ""
-                        : archivePanelData.oracleOwner,
-                hostname:
-                    archivePanelData.databaseHostname === undefined
-                        ? ""
-                        : archivePanelData.databaseHostname,
-                port:
-                    archivePanelData.databasePort === undefined
-                        ? ""
-                        : archivePanelData.databasePort,
-                username:
-                    archivePanelData.databaseUsername === undefined
-                        ? ""
-                        : archivePanelData.databaseUsername,
-                password:
-                    archivePanelData.databasePassword === undefined
-                        ? ""
-                        : archivePanelData.databasePassword,
-                database:
-                    archivePanelData.databaseName === undefined
-                        ? ""
-                        : archivePanelData.databaseName,
-                archive_name:
-                    archivePanelData.archiveName === undefined
-                        ? ""
-                        : archivePanelData.archiveName,
-                mode:
-                    archivePanelData.databaseMode === undefined
-                        ? ""
-                        : archivePanelData.databaseMode,
+                oracle_owner: archivePanelData.oracleOwner || "",
+                hostname: archivePanelData.databaseHostname || "",
+                port: archivePanelData.databasePort || "",
+                username: archivePanelData.databaseUsername || "",
+                password: archivePanelData.databasePassword || "",
+                database: archivePanelData.databaseName || "",
+                archive_name: archivePanelData.archiveName || "",
+                mode: archivePanelData.databaseMode || "",
             },
         };
 
         setDatabaseConnectionState(myInit);
-        const response = await API.post(
-            "api",
-            "api/archive/source/test-connection",
-            myInit
-        );
-        setDatabaseConnected(response["connected"]);
-        setDatabaseConnecting(false);
-        setDatabaseTestExecuted(true);
+
+        try {
+            const response = await API.post("api", "api/archive/source/test-connection", myInit);
+            setDatabaseConnected(response["connected"]);
+        } catch (error) {
+            setDatabaseConnected(false);
+        } finally {
+            setDatabaseConnecting(false);
+            setDatabaseTestExecuted(true);
+        }
     };
+
 
     const isEnable =
         archivePanelData.archiveName !== undefined &&
