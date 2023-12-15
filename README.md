@@ -187,49 +187,53 @@ The top level project structure follows a responsibility structure:
 
 This section covers data type conversions that SDAS processes between PostgreSQL and Athena databases.
 
-| Source Data Type                 | Supported? | SDAS Data Type |
-| -------------------------------- | ---------- | -------------- |
-| bigint                           | Y          | bigint         |
-| bigserial                        | Y          | int            |
-| bit [ (n) ]                      | Y          | string         |
-| bit varying [ (n) ]              | Y          | string         |
-| boolean                          | Y          | boolean        |
-| box                              | Y          | string         |
-| bytea                            | Y          | string         |
-| character varying [ (n) ]        | Y          | string         |
-| cidr                             | Y          | string         |
-| circle                           | Y          | string         |
-| date                             | Y          | date           |
-| double precision                 | Y          | decimal(38,6)  |
-| inet                             | Y          | string         |
-| integer                          | Y          | int            |
-| interval [ fields ] [ (p) ]      | Y          | string         |
-| json                             | Y          | string         |
-| jsonb                            | Y          | string         |
-| lseg                             | Y          | string         |
-| macaddr                          | Y          | string         |
-| macaddr8                         | Y          | string         |
-| money                            | Y          | decimal(19,4)  |
-| numeric                          | Y          | int            |
-| path                             | Y          | string         |
-| pg_lsn                           | Y          | string         |
-| pg_snapshot                      | Y          | string         |
-| point                            | Y          | string         |
-| polygon                          | Y          | string         |
-| real                             | Y          | decimal(19,4)  |
-| smallint                         | Y          | int            |
-| smallserial                      | Y          | int            |
-| serial                           | Y          | int            |
-| text                             | Y          | string         |
-| time [ (p) ]                     | Y          | string         |
-| time [ (p) ] with time zone      | Y          | string         |
-| timestamp [ (p) ]                | Y          | timestamp      |
-| timestamp [ (p) ] with time zone | Y          | timestamp      |
-| tsquery                          | Y          | string         |
-| tsvector                         | Y          | string         |
-| txid_snapshot                    | Y          | string         |
-| uuid                             | Y          | string         |
-| xml                              | Y          | string         |
+| Source Data Type              | Supported? | SDAS Data Type |
+|-------------------------------|------------|---------------|
+| ARRAY                         | Y          | array         |
+| bigserial                     | Y          | int           |
+| bigint                        | Y          | bigint        |
+| bit [ (n) ]                   | Y          | string        |
+| bit varying [ (n) ]           | Y          | string        |
+| boolean                       | Y          | boolean       |
+| box                           | Y          | string        |
+| bytea                         | Y          | binary        |
+| character varying [ (n) ]     | Y          | string        |
+| cidr                          | Y          | string        |
+| circle                        | Y          | string        |
+| date                          | Y          | date          |
+| double precision              | Y          | decimal(38,6) |
+| inet                          | Y          | string        |
+| integer                       | Y          | int           |
+| interval [ fields ] [ (p) ]   | Y          | string        |
+| json                          | Y          | string        |
+| jsonb                         | Y          | string        |
+| lseg                          | Y          | string        |
+| macaddr                       | Y          | string        |
+| macaddr8                      | Y          | string        |
+| money                         | Y          | decimal(19,4) |
+| numeric                       | Y          | decimal(38,18)|
+| path                          | Y          | string        |
+| pg_lsn                        | Y          | string        |
+| pg_snapshot                   | Y          | string        |
+| point                         | Y          | string        |
+| polygon                       | Y          | string        |
+| real                          | Y          | decimal(19,4) |
+| serial                        | Y          | int           |
+| smallint                      | Y          | smallint      |
+| smallserial                   | Y          | int           |
+| text                          | Y          | string        |
+| time                          | Y          | string        |
+| time with time zone           | Y          | string        |
+| timestamp                     | Y          | string        |
+| timestamp with time zone      | Y          | string        |
+| timestamp without time zone   | Y          | string        |
+| tsquery                       | Y          | string        |
+| tsvector                      | Y          | string        |
+| txid_snapshot                 | Y          | string        |
+| USER-DEFINED                  | Y          | string        |
+| uuid                          | Y          | string        |
+| xml                           | Y          | string        |
+
 
 ## Troubleshooting
 
