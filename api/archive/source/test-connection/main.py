@@ -13,6 +13,15 @@ express or implied. See the License for the specific language governing
 permissions and limitations under the License.
 """
 
+"""
+This module contains an AWS Lambda function for testing database connections. It supports multiple database engines such 
+as MySQL, MSSQL, Oracle, and PostgreSQL. The function handles incoming requests to test database connectivity and 
+returns the connection status.
+
+It uses environment variables for configuration, has built-in logging capabilities, and includes functions for masking 
+sensitive data and building HTTP responses.
+"""
+
 import json
 import logging
 import os
@@ -31,6 +40,7 @@ if logger.hasHandlers():
     logger.setLevel(LOG_LEVEL)
 else:
     logging.basicConfig(level=LOG_LEVEL)
+
 
 # endregion
 
@@ -77,7 +87,7 @@ def lambda_handler(event, context):
                                       port,
                                       username,
                                       password,
-                                      database,)
+                                      database, )
         try:
             connected = connection.testConnection()
             response = {"connected": connected}
@@ -92,25 +102,24 @@ def lambda_handler(event, context):
         for owner in oracle_owner_list:
             try:
                 oracle_connection = oracle.Connection(hostname,
-                                                    port,
-                                                    username,
-                                                    password,
-                                                    database,
-                                                    owner)
+                                                      port,
+                                                      username,
+                                                      password,
+                                                      database,
+                                                      owner)
                 connected = oracle_connection.testConnection()
                 response = {"connected": connected}
                 return build_response(200, json.dumps(response))
             except Exception as ex:
                 logger.error(traceback.format_exc())
                 return build_response(500, "Server Error")
-            
+
     elif database_engine == "mssql":
-        print("mssql")
         connection = mssql.Connection(hostname,
                                       port,
                                       username,
                                       password,
-                                      database,)
+                                      database, )
         try:
             connected = connection.testConnection()
             response = {"connected": connected}
@@ -121,10 +130,10 @@ def lambda_handler(event, context):
 
     elif database_engine == "postgresql":
         connection = postgresql.Connection(hostname,
-                                      port,
-                                      username,
-                                      password,
-                                      database,)
+                                           port,
+                                           username,
+                                           password,
+                                           database, )
         try:
             connected = connection.testConnection()
             response = {"connected": connected}
@@ -133,8 +142,7 @@ def lambda_handler(event, context):
             logger.error(traceback.format_exc())
             return build_response(500, "Server Error")
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     example_event = {}
     response = lambda_handler(example_event, {})
-    print(json.dumps(response))

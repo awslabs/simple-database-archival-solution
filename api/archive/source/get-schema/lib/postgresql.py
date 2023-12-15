@@ -41,7 +41,7 @@ def convert_schema(type):
     elif "box" in type:
         return "string"
     elif "bytea" in type:
-        return "string"
+        return "binary"
     elif "character" in type:
         return "string"
     elif "character" in type:
@@ -73,7 +73,7 @@ def convert_schema(type):
     elif "money" in type:
         return "decimal(19,4)"
     elif "numeric" in type:
-        return "int"
+        return "decimal(38,18)"
     elif "path" in type:
         return "string"
     elif "pg_lsn" in type:
@@ -87,17 +87,17 @@ def convert_schema(type):
     elif "real" in type:
         return "decimal(19,4)"
     elif "smallint" in type:
-        return "int"
+        return "smallint"
     elif "smallserial" in type:
         return "int"
     elif "serial" in type:
         return "int"
     elif "text" in type:
         return "string"
-    elif "time" in type:
-        return "string"
     elif "timestamp" in type:
         return "timestamp"
+    elif "time" in type:
+        return "string"
     elif "tsquery" in type:
         return "string"
     elif "tsvector" in type:
@@ -107,6 +107,10 @@ def convert_schema(type):
     elif "uuid" == type:
         return "string"
     elif "xml" in type:
+        return "string"
+    elif "ARRAY" in type:
+        return "array"
+    elif "USER-DEFINED" in type:
         return "string"
 
 
@@ -173,7 +177,6 @@ class Connection:
                     if len(rows) != 0:
                         row_list = []
                         for row in rows:
-                        
                             row_type = convert_schema(row[1])
                             row_list.append(
                                 {
