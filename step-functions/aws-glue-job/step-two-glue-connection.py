@@ -20,9 +20,10 @@ AVAILABILITY_ZONE = os.environ["AVAILABILITY_ZONE"]
 SUBNET_ID = os.environ["SUBNET_ID"]
 RDS_SECURITY_GROUP = os.environ["RDS_SECURITY_GROUP"]
 VPC_DEFAULT_SECURITY_GROUP = os.environ["VPC_DEFAULT_SECURITY_GROUP"]
+REGION = os.getenv("REGION")
 
-glue_client = boto3.client('glue', region_name='us-east-1')
-dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+glue_client = boto3.client('glue', region_name=REGION)
+dynamodb = boto3.resource('dynamodb', region_name=REGION)
 ssm = boto3.client('ssm')
 secret_client = boto3.client('secretsmanager')
 

@@ -19,9 +19,11 @@ import logging
 import os
 import traceback
 
+REGION = os.getenv("REGION")
+
 s3 = boto3.resource('s3')
 s3_client = boto3.client('s3')
-dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+dynamodb = boto3.resource('dynamodb', region_name=REGION)
 ssm = boto3.client('ssm')
 
 # region Logging

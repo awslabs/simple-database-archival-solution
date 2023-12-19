@@ -13,10 +13,11 @@ express or implied. See the License for the specific language governing
 permissions and limitations under the License.
 """
 
-
 import boto3
+import os
 
-dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+REGION = os.getenv("REGION")
+dynamodb = boto3.resource('dynamodb', region_name=REGION)
 ssm = boto3.client('ssm')
 
 
@@ -122,7 +123,8 @@ def lambda_handler(event, context):
 
     # Number Validation
     for schema in event["table"]["schema"][::-1]:
-        if schema["value"] == "decimal" or schema["value"] == "number" or schema["value"] == "decimal" or schema["value"] == "int":
+        if schema["value"] == "decimal" or schema["value"] == "number" or schema["value"] == "decimal" or schema[
+            "value"] == "int":
             update_validation_count(event["table"]["archive_id"])
             return_event.append({
                 "table": event["table"]["table"],

@@ -14,9 +14,11 @@ permissions and limitations under the License.
 """
 
 import boto3
+import os
 
-client = boto3.client('glue', region_name='us-east-1')
-dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+REGION = os.getenv("REGION")
+client = boto3.client('glue', region_name=REGION)
+dynamodb = boto3.resource('dynamodb', region_name=REGION)
 ssm = boto3.client('ssm')
 
 

@@ -16,9 +16,9 @@
 
 import * as apigwv2 from "@aws-cdk/aws-apigatewayv2-alpha";
 import * as lambdaPython from "@aws-cdk/aws-lambda-python-alpha";
-import { Duration, RemovalPolicy } from "aws-cdk-lib";
-import { SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
-import { Construct } from "constructs";
+import {Duration, RemovalPolicy} from "aws-cdk-lib";
+import {SqsEventSource} from "aws-cdk-lib/aws-lambda-event-sources";
+import {Construct} from "constructs";
 import * as cdk from "aws-cdk-lib";
 import * as ssm from "aws-cdk-lib/aws-ssm";
 import * as iam from "aws-cdk-lib/aws-iam";
@@ -28,14 +28,14 @@ import * as logs from "aws-cdk-lib/aws-logs";
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import * as athena from "aws-cdk-lib/aws-athena";
 
-import { AmplifyConfigLambdaConstruct } from "./constructs/amplify-config-lambda-construct";
-import { ApiGatewayV2CloudFrontConstruct } from "./constructs/apigatewayv2-cloudfront-construct";
-import { ApiGatewayV2LambdaConstruct } from "./constructs/apigatewayv2-lambda-construct";
-import { CloudFrontS3WebSiteConstruct } from "./constructs/cloudfront-s3-website-construct";
-import { CognitoWebNativeConstruct } from "./constructs/cognito-web-native-construct";
-import { SsmParameterReaderConstruct } from "./constructs/ssm-parameter-reader-construct";
-import { S3BucketConstruct } from "./constructs/s3-bucket-construct";
-import { DasApiPythonConstruct } from "./constructs/das-api-python-construct";
+import {AmplifyConfigLambdaConstruct} from "./constructs/amplify-config-lambda-construct";
+import {ApiGatewayV2CloudFrontConstruct} from "./constructs/apigatewayv2-cloudfront-construct";
+import {ApiGatewayV2LambdaConstruct} from "./constructs/apigatewayv2-lambda-construct";
+import {CloudFrontS3WebSiteConstruct} from "./constructs/cloudfront-s3-website-construct";
+import {CognitoWebNativeConstruct} from "./constructs/cognito-web-native-construct";
+import {SsmParameterReaderConstruct} from "./constructs/ssm-parameter-reader-construct";
+import {S3BucketConstruct} from "./constructs/s3-bucket-construct";
+import {DasApiPythonConstruct} from "./constructs/das-api-python-construct";
 
 export interface AppStackProps extends cdk.StackProps {
     readonly ssmWafArnParameterName: string;
@@ -212,14 +212,14 @@ export class AppStack extends cdk.Stack {
          */
 
         const archiveTable = new dynamodb.Table(this, "archives", {
-            partitionKey: { name: "id", type: dynamodb.AttributeType.STRING },
+            partitionKey: {name: "id", type: dynamodb.AttributeType.STRING},
             billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
             removalPolicy: RemovalPolicy.DESTROY,
             pointInTimeRecovery: true,
         });
 
         const queryIdLookupTable = new dynamodb.Table(this, "query_lookup", {
-            partitionKey: { name: "id", type: dynamodb.AttributeType.STRING },
+            partitionKey: {name: "id", type: dynamodb.AttributeType.STRING},
             billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
             removalPolicy: RemovalPolicy.DESTROY,
             pointInTimeRecovery: true,
@@ -466,17 +466,17 @@ export class AppStack extends cdk.Stack {
         const ssmGetParameterPolicy = new iam.PolicyStatement({
             actions: ["ssm:GetParameter"],
             resources: [
-                `arn:aws:ssm:us-east-1:${awsAccountId}:parameter/archive/dynamodb-table`,
-                `arn:aws:ssm:us-east-1:${awsAccountId}:parameter/archive/websocket-connection-dynamodb-table`,
-                `arn:aws:ssm:us-east-1:${awsAccountId}:parameter/job/s3-bucket-table-data`,
-                `arn:aws:ssm:us-east-1:${awsAccountId}:parameter/athena/s3-athena-temp-bucket`,
-                `arn:aws:ssm:us-east-1:${awsAccountId}:parameter/job/step-functions-state-machine`,
-                `arn:aws:ssm:us-east-1:${awsAccountId}:parameter/glue/s3-bucket-glue-assets`,
-                `arn:aws:ssm:us-east-1:${awsAccountId}:parameter/job/sf-validation-state-machine`,
-                `arn:aws:ssm:us-east-1:${awsAccountId}:parameter/glue/temp-dir`,
-                `arn:aws:ssm:us-east-1:${awsAccountId}:parameter/archive/query-lookup-dynamodb-table`,
-                `arn:aws:ssm:us-east-1:${awsAccountId}:parameter/glue/glue-role`,
-                `arn:aws:ssm:us-east-1:${awsAccountId}:parameter/sqs/validation`,
+                `arn:aws:ssm:${awsRegion}:${awsAccountId}:parameter/archive/dynamodb-table`,
+                `arn:aws:ssm:${awsRegion}:${awsAccountId}:parameter/archive/websocket-connection-dynamodb-table`,
+                `arn:aws:ssm:${awsRegion}:${awsAccountId}:parameter/job/s3-bucket-table-data`,
+                `arn:aws:ssm:${awsRegion}:${awsAccountId}:parameter/athena/s3-athena-temp-bucket`,
+                `arn:aws:ssm:${awsRegion}:${awsAccountId}:parameter/job/step-functions-state-machine`,
+                `arn:aws:ssm:${awsRegion}:${awsAccountId}:parameter/glue/s3-bucket-glue-assets`,
+                `arn:aws:ssm:${awsRegion}:${awsAccountId}:parameter/job/sf-validation-state-machine`,
+                `arn:aws:ssm:${awsRegion}:${awsAccountId}:parameter/glue/temp-dir`,
+                `arn:aws:ssm:${awsRegion}:${awsAccountId}:parameter/archive/query-lookup-dynamodb-table`,
+                `arn:aws:ssm:${awsRegion}:${awsAccountId}:parameter/glue/glue-role`,
+                `arn:aws:ssm:${awsRegion}:${awsAccountId}:parameter/sqs/validation`,
             ],
         });
 
@@ -505,17 +505,17 @@ export class AppStack extends cdk.Stack {
 
         const glueCatalogPolicy = new iam.PolicyStatement({
             actions: ["glue:GetTable"],
-            resources: [`arn:aws:glue:us-east-1:${awsAccountId}:catalog`],
+            resources: [`arn:aws:glue:${awsRegion}:${awsAccountId}:catalog`],
         });
 
         const glueDatabasePolicy = new iam.PolicyStatement({
             actions: ["glue:GetTable"],
-            resources: [`arn:aws:glue:us-east-1:${awsAccountId}:database/*`],
+            resources: [`arn:aws:glue:${awsRegion}:${awsAccountId}:database/*`],
         });
 
         const glueTablePolicy = new iam.PolicyStatement({
             actions: ["glue:GetTable"],
-            resources: [`arn:aws:glue:us-east-1:${awsAccountId}:table/*`],
+            resources: [`arn:aws:glue:${awsRegion}:${awsAccountId}:table/*`],
         });
 
         const glueS3BucketPolicy = new iam.PolicyStatement({
@@ -550,12 +550,12 @@ export class AppStack extends cdk.Stack {
                 "glue:GetTable",
                 "glue:GetJobRun",
             ],
-            resources: [`arn:aws:glue:us-east-1:${awsAccountId}:*`],
+            resources: [`arn:aws:glue:${awsRegion}:${awsAccountId}:*`],
         });
 
         const stateMachinePolicy = new iam.PolicyStatement({
             actions: ["states:StartExecution"],
-            resources: [`arn:aws:states:us-east-1:${awsAccountId}:stateMachine:*`],
+            resources: [`arn:aws:states:${awsRegion}:${awsAccountId}:stateMachine:*`],
         });
 
         const awsGluePolicyTest = new iam.PolicyStatement({
@@ -743,7 +743,9 @@ export class AppStack extends cdk.Stack {
                 index: "main.py",
                 entry: "../api/archives/list",
                 timeout: cdk.Duration.minutes(5),
-                environment: {},
+                environment: {
+                    REGION: awsRegion,
+                },
                 routePath: "/api/archives/list",
                 methods: [apigwv2.HttpMethod.GET],
                 api: api.apiGatewayV2,
@@ -777,7 +779,9 @@ export class AppStack extends cdk.Stack {
                 index: "main.py",
                 entry: "../api/job/run",
                 timeout: cdk.Duration.minutes(5),
-                environment: {},
+                environment: {
+                    REGION: awsRegion,
+                },
                 routePath: "/api/job/run",
                 methods: [apigwv2.HttpMethod.POST],
                 api: api.apiGatewayV2,
@@ -847,7 +851,9 @@ export class AppStack extends cdk.Stack {
                 index: "validation.py",
                 entry: "../functions/sqs",
                 timeout: cdk.Duration.seconds(60),
-                environment: {},
+                environment: {
+                    REGION: awsRegion,
+                },
             }
         );
 
@@ -929,7 +935,9 @@ export class AppStack extends cdk.Stack {
                 index: "step-one-start-status.py",
                 entry: "../step-functions/aws-glue-job",
                 timeout: cdk.Duration.minutes(5),
-                environment: {},
+                environment: {
+                    REGION: awsRegion,
+                },
             }
         );
 
@@ -948,6 +956,7 @@ export class AppStack extends cdk.Stack {
                     SUBNET_ID: subnets[0].subnetId,
                     RDS_SECURITY_GROUP: rdsSecurityGroup.securityGroupId,
                     VPC_DEFAULT_SECURITY_GROUP: securityGroup,
+                    REGION: awsRegion,
                 },
             }
         );
@@ -961,7 +970,9 @@ export class AppStack extends cdk.Stack {
                 index: "step-three-glue-database.py",
                 entry: "../step-functions/aws-glue-job",
                 timeout: cdk.Duration.minutes(5),
-                environment: {},
+                environment: {
+                    REGION: awsRegion,
+                },
             }
         );
 
@@ -974,7 +985,9 @@ export class AppStack extends cdk.Stack {
                 index: "step-four-glue-tables.py",
                 entry: "../step-functions/aws-glue-job",
                 timeout: cdk.Duration.minutes(5),
-                environment: {},
+                environment: {
+                    REGION: awsRegion,
+                },
             }
         );
 
@@ -1209,7 +1222,7 @@ export class AppStack extends cdk.Stack {
             "CreateStateMachineParam",
             {
                 parameterName: "/job/step-functions-state-machine",
-                stringValue: `arn:aws:states:us-east-1:${awsAccountId}:stateMachine:${stateMachine.stateMachineName}`,
+                stringValue: `arn:aws:states:${awsRegion}:${awsAccountId}:stateMachine:${stateMachine.stateMachineName}`,
                 description: "Name for state machine",
                 type: ssm.ParameterType.STRING,
                 tier: ssm.ParameterTier.STANDARD,
@@ -1283,7 +1296,9 @@ export class AppStack extends cdk.Stack {
                 index: "count-validation.py",
                 entry: "../step-functions/validation",
                 timeout: cdk.Duration.minutes(5),
-                environment: {},
+                environment: {
+                    REGION: awsRegion,
+                },
             }
         );
 
@@ -1329,7 +1344,9 @@ export class AppStack extends cdk.Stack {
                 index: "string-validation.py",
                 entry: "../step-functions/validation",
                 timeout: cdk.Duration.minutes(5),
-                environment: {},
+                environment: {
+                    REGION: awsRegion,
+                },
             }
         );
 
@@ -1375,7 +1392,9 @@ export class AppStack extends cdk.Stack {
                 index: "number-validation.py",
                 entry: "../step-functions/validation",
                 timeout: cdk.Duration.minutes(5),
-                environment: {},
+                environment: {
+                    REGION: awsRegion,
+                },
             }
         );
 
@@ -1496,7 +1515,7 @@ export class AppStack extends cdk.Stack {
             "CreateValidationStateMachineParam",
             {
                 parameterName: "/job/sf-validation-state-machine",
-                stringValue: `arn:aws:states:us-east-1:${awsAccountId}:stateMachine:${validationStateMachine.stateMachineName}`,
+                stringValue: `arn:aws:states:${awsRegion}:${awsAccountId}:stateMachine:${validationStateMachine.stateMachineName}`,
                 description: "Name for state machine",
                 type: ssm.ParameterType.STRING,
                 tier: ssm.ParameterTier.STANDARD,
@@ -1524,6 +1543,7 @@ export class AppStack extends cdk.Stack {
                 entry: "../functions/eventbridge",
                 timeout: cdk.Duration.seconds(30),
                 environment: {
+                    REGION: awsRegion,
                     ARCHIVE_TABLE: archiveTable.tableName,
                     VALIDATION_STATE_MACHINE: validationStateMachine.stateMachineArn,
                 },
@@ -1539,7 +1559,9 @@ export class AppStack extends cdk.Stack {
                 index: "athena-job-status.py",
                 entry: "../functions/eventbridge",
                 timeout: cdk.Duration.minutes(15),
-                environment: {},
+                environment: {
+                    REGION: awsRegion,
+                },
             }
         );
 
@@ -1621,7 +1643,9 @@ export class AppStack extends cdk.Stack {
             index: "main.py",
             entry: "../api/archive/legal",
             timeout: cdk.Duration.minutes(15),
-            environment: {},
+            environment: {
+                REGION: awsRegion,
+            },
         });
 
         new ApiGatewayV2LambdaConstruct(this, "LegalHoldGateway", {
@@ -1673,7 +1697,9 @@ export class AppStack extends cdk.Stack {
             index: "main.py",
             entry: "../api/archive/expiration",
             timeout: cdk.Duration.minutes(15),
-            environment: {},
+            environment: {
+                REGION: awsRegion,
+            },
         });
 
         new ApiGatewayV2LambdaConstruct(this, "ExpirationGateway", {
@@ -1726,7 +1752,9 @@ export class AppStack extends cdk.Stack {
                 index: "main.py",
                 entry: "../api/archive/validate",
                 timeout: cdk.Duration.minutes(5),
-                environment: {},
+                environment: {
+                    REGION: awsRegion,
+                },
             }
         );
 
@@ -1756,7 +1784,9 @@ export class AppStack extends cdk.Stack {
             index: "main.py",
             entry: "../api/archive/archive",
             timeout: cdk.Duration.minutes(5),
-            environment: {},
+            environment: {
+                REGION: awsRegion,
+            },
         });
 
         new ApiGatewayV2LambdaConstruct(this, "ArchiveApiGateway", {

@@ -20,6 +20,8 @@ import os
 import traceback
 import uuid
 
+REGION = os.getenv("REGION")
+
 # region Logging
 
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
@@ -36,7 +38,7 @@ else:
 
 ssm = boto3.client('ssm')
 client = boto3.client('stepfunctions')
-dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+dynamodb = boto3.resource('dynamodb', region_name=REGION)
 
 def mask_sensitive_data(event):
     # remove sensitive data from request object before logging

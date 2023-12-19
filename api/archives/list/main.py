@@ -21,6 +21,7 @@ import traceback
 
 from decimal import Decimal
 
+REGION = os.getenv("REGION")
 
 class DecimalEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -42,7 +43,7 @@ else:
 # endregion
 
 ssm = boto3.client('ssm')
-dynamodb = boto3.resource('dynamodb', region_name="us-east-1")
+dynamodb = boto3.resource('dynamodb', region_name=REGION)
 
 def mask_sensitive_data(event):
     # remove sensitive data from request object before logging

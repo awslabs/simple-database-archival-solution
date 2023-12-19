@@ -13,19 +13,20 @@ express or implied. See the License for the specific language governing
 permissions and limitations under the License.
 """
 
-
 import boto3
 import json
+import os
+
+REGION = os.getenv("REGION")
 
 client = boto3.client("athena")
 sqs = boto3.client('sqs')
-dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+dynamodb = boto3.resource('dynamodb', region_name=REGION)
 ssm = boto3.client('ssm')
 
 
 # Get Athena Response
 def get_athena_response(query_execution_id):
-    
     response = client.get_query_results(
         QueryExecutionId=query_execution_id,
         MaxResults=123
@@ -34,13 +35,13 @@ def get_athena_response(query_execution_id):
 
 
 # Set Job State Function
-def update_validation_state(archive_id, query_execution_id, table_name, validation_type, athena_response, query, status_message):
-    
+def update_validation_state(archive_id, query_execution_id, table_name, validation_type, athena_response, query,
+                            status_message):
     parameter = ssm.get_parameter(
         Name='/archive/dynamodb-table', WithDecryption=True)
     table = dynamodb.Table(parameter['Parameter']['Value'])
     dynamodb_response = table.get_item(Key={"id": archive_id})
-    
+
     sqs_parameter = ssm.get_parameter(
         Name='/sqs/validation', WithDecryption=True)
     sqs_parameter_value = sqs_parameter['Parameter']['Value']
@@ -61,7 +62,6 @@ def update_validation_state(archive_id, query_execution_id, table_name, validati
                 }
             )
 
-
     # Send message to SQS queue
     message = {"archive_id": archive_id}
     response = sqs.send_message(
@@ -71,7 +71,6 @@ def update_validation_state(archive_id, query_execution_id, table_name, validati
         MessageBody=json.dumps(message)
     )
     print(response)
-
 
     # validation_completed_increment = dynamodb_response["Item"][
     #     "counters"]["validation"]["validation_completed"] + 1
@@ -94,7 +93,6 @@ def update_validation_state(archive_id, query_execution_id, table_name, validati
 
 
 def get_archive(query_execution_id):
-
     parameter = ssm.get_parameter(
         Name='/archive/query-lookup-dynamodb-table', WithDecryption=True)
 
@@ -109,11 +107,10 @@ def get_archive(query_execution_id):
 
 
 def lambda_handler(event, context):
-
     archive_id, table_name, validation_type, query = get_archive(
         event["detail"]["queryExecutionId"])
     athena_response = get_athena_response(event["detail"]["queryExecutionId"])
-        
+
     if event["detail"]["currentState"] == "SUCCEEDED":
 
         update_validation_state(
