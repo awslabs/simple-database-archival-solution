@@ -13,15 +13,15 @@ express or implied. See the License for the specific language governing
 permissions and limitations under the License.
 """
 
-
 import boto3
+import os
 
-dynamodb = boto3.resource("dynamodb", region_name="us-east-1")
+REGION = os.getenv("REGION")
+dynamodb = boto3.resource("dynamodb", region_name=REGION)
 ssm = boto3.client("ssm")
 
 
 def lambda_handler(event, context):
-
     try:
         # Get SSM Parameter for DynamoDB Table name
         parameter = ssm.get_parameter(

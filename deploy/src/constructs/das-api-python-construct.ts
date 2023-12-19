@@ -26,22 +26,24 @@ export interface DasApiPythonConstructProps extends cdk.StackProps {
   readonly name: string;
   readonly runtime: cdk.aws_lambda.Runtime;
   readonly handler: string;
-  readonly index: string,
-  readonly entry: string,
-  readonly timeout: cdk.Duration,
-  readonly environment: any,
-  readonly routePath: string,
-  readonly methods: Array<apigwv2.HttpMethod>,
-  readonly api: apigw.HttpApi
-  readonly iamInlinePolicy?: Array<iam.PolicyStatement>
+  readonly index: string;
+  readonly entry: string;
+  readonly timeout: cdk.Duration;
+  readonly environment: any;
+  readonly routePath: string;
+  readonly methods: Array<apigwv2.HttpMethod>;
+  readonly api: apigw.HttpApi;
+  readonly iamInlinePolicy?: Array<iam.PolicyStatement>;
 }
 
 const defaultProps: Partial<DasApiPythonConstruct> = {};
 
 export class DasApiPythonConstruct extends Construct {
-
-
-  constructor(parent: Construct, name: string, props: DasApiPythonConstructProps) {
+  constructor(
+    parent: Construct,
+    name: string,
+    props: DasApiPythonConstructProps
+  ) {
     super(parent, name);
 
     /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -67,7 +69,7 @@ export class DasApiPythonConstruct extends Construct {
       api: props.api,
     });
 
-    if (props.iamInlinePolicy){
+    if (props.iamInlinePolicy) {
       lambdaPythonFunction.role?.attachInlinePolicy(
         new iam.Policy(this, props.name + "Policy", {
           statements: props.iamInlinePolicy,

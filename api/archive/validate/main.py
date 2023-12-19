@@ -21,6 +21,8 @@ import traceback
 import datetime
 import uuid
 
+REGION = os.getenv("REGION")
+
 # region Logging
 
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
@@ -64,7 +66,7 @@ def build_response(http_code, body):
 
 def lambda_handler(event, context):
     logger.info(mask_sensitive_data(event))
-    dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+    dynamodb = boto3.resource('dynamodb', region_name=REGION)
     ssm = boto3.client('ssm')
     
     try:

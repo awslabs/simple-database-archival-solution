@@ -15,10 +15,12 @@ permissions and limitations under the License.
 
 
 import boto3
+import os
 
+REGION = os.getenv("REGION")
 CLIENT = boto3.client("athena")
 ssm = boto3.client('ssm')
-dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+dynamodb = boto3.resource('dynamodb', region_name=REGION)
 
 
 def count_validation(ARCHIVE_ID, DATABASE_NAME, TABLE_NAME, TABLE_INDEX, ROW_KEY):
@@ -84,7 +86,7 @@ def count_validation(ARCHIVE_ID, DATABASE_NAME, TABLE_NAME, TABLE_INDEX, ROW_KEY
 
 def lambda_handler(event, context):
 
-    dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+    dynamodb = boto3.resource('dynamodb', region_name=REGION)
     ssm = boto3.client('ssm')
 
     TABLE_NAME = event["table"]

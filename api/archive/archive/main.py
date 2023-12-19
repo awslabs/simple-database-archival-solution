@@ -21,6 +21,8 @@ import traceback
 import datetime
 import uuid
 
+REGION = os.getenv("REGION")
+
 # region Logging
 
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
@@ -35,7 +37,7 @@ else:
 
 # endregion
 
-dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+dynamodb = boto3.resource('dynamodb', region_name=REGION)
 ssm = boto3.client('ssm')
 
 

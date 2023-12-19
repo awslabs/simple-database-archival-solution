@@ -13,13 +13,15 @@ express or implied. See the License for the specific language governing
 permissions and limitations under the License.
 """
 
-
 import boto3
+import os
+
+REGION = os.getenv("REGION")
 ssm = boto3.client('ssm')
-dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+dynamodb = boto3.resource('dynamodb', region_name=REGION)
+
 
 def number_validation(ARCHIVE_ID, DATABASE_NAME, TABLE_NAME, TABLE_INDEX, ROW_KEY):
-       
     parameter = ssm.get_parameter(
         Name='/archive/dynamodb-table', WithDecryption=True)
     query_parameter = ssm.get_parameter(
@@ -29,15 +31,15 @@ def number_validation(ARCHIVE_ID, DATABASE_NAME, TABLE_NAME, TABLE_INDEX, ROW_KE
 
     table = dynamodb.Table(parameter['Parameter']['Value'])
     query_table = dynamodb.Table(query_parameter['Parameter']['Value'])
-    
+
     athena_bucket_value = athena_bucket_parameter['Parameter']['Value']
-    
+
     # START Number Validation
     try:
         CLIENT = boto3.client("athena")
         query = "SELECT SUM(\"" + ROW_KEY + "\") from \"" + ARCHIVE_ID + "-" + DATABASE_NAME + \
                 "-database\".\"" + ARCHIVE_ID + "-" + \
-            DATABASE_NAME + "-" + TABLE_NAME + "-table\""
+                DATABASE_NAME + "-" + TABLE_NAME + "-table\""
 
         response = CLIENT.start_query_execution(
             QueryString=query,
@@ -67,33 +69,30 @@ def number_validation(ARCHIVE_ID, DATABASE_NAME, TABLE_NAME, TABLE_INDEX, ROW_KE
                 }
             }
         )
-        
+
         return response
-    
+
     except Exception as ex:
         print("error")
         print(ex)
 
-    
-
 
 def lambda_handler(event, context):
-    
-    dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+    dynamodb = boto3.resource('dynamodb', region_name=REGION)
     ssm = boto3.client('ssm')
 
     TABLE_NAME = event["table"]
     DATABASE_NAME = event["database"]
     ARCHIVE_ID = event["archive_id"]
     ROW_KEY = event["key"]
-    
+
     parameter = ssm.get_parameter(
         Name='/archive/dynamodb-table', WithDecryption=True)
 
     table = dynamodb.Table(parameter['Parameter']['Value'])
     dynamodb_response = table.get_item(Key={"id": ARCHIVE_ID})
 
-	# Count Validation
+    # Count Validation
     for index, item in enumerate(dynamodb_response["Item"]["table_details"]):
         if item["table"] == TABLE_NAME:
             number_validation(ARCHIVE_ID, DATABASE_NAME, TABLE_NAME, index, ROW_KEY)
