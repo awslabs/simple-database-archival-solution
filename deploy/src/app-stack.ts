@@ -211,18 +211,26 @@ export class AppStack extends cdk.Stack {
          * CREATE DynamoDB Tables
          */
 
-        const archiveTable = new dynamodb.Table(this, "archives", {
+        const archiveTable = new dynamodb.Table(this, "Archives", {
             partitionKey: {name: "id", type: dynamodb.AttributeType.STRING},
             billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
             removalPolicy: RemovalPolicy.DESTROY,
             pointInTimeRecovery: true,
         });
 
-        const queryIdLookupTable = new dynamodb.Table(this, "query_lookup", {
+        const queryIdLookupTable = new dynamodb.Table(this, "QueryLookup", {
             partitionKey: {name: "id", type: dynamodb.AttributeType.STRING},
             billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
             removalPolicy: RemovalPolicy.DESTROY,
             pointInTimeRecovery: true,
+        });
+
+        const fetchTablesSchemaAsync = new dynamodb.Table(this, 'FetchTablesSchemaAsync', {
+            partitionKey: {name: 'id', type: dynamodb.AttributeType.STRING},
+            billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+            removalPolicy: cdk.RemovalPolicy.DESTROY,
+            pointInTimeRecovery: true,
+            timeToLiveAttribute: 'ttl' // TTL attribute for expiration
         });
 
         /*
@@ -577,6 +585,12 @@ export class AppStack extends cdk.Stack {
             ],
         });
 
+        const getItemAsyncTable = new iam.PolicyStatement({
+            actions: ['dynamodb:GetItem'],
+            resources: [fetchTablesSchemaAsync.tableArn],
+        });
+
+
         /*
          * END
          * AWS IAM Policy Statements
@@ -647,8 +661,9 @@ export class AppStack extends cdk.Stack {
             }
         );
 
-        const databaseSchemaRole = new iam.Role(this, "DatabaseSchemaRole", {
-            roleName: "DatabaseSchemaRole",
+        // START: Background Lambda Function to get Tables from Source Database
+        const backgroundGetSourceTablesRole = new iam.Role(this, "BackgroundGetSourceTablesRole", {
+            roleName: "BackgroundGetSourceTablesRole",
             assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
             description: "IAM Role for the Test Connection Lambda",
             managedPolicies: [
@@ -661,11 +676,16 @@ export class AppStack extends cdk.Stack {
             ],
         });
 
-        this.databaseSchemaLambda = new lambdaPython.PythonFunction(
+        backgroundGetSourceTablesRole.addToPolicy(new iam.PolicyStatement({
+            actions: ['dynamodb:GetItem', 'dynamodb:UpdateItem',],
+            resources: [fetchTablesSchemaAsync.tableArn],
+        }));
+
+        const backgroundGetSourceTablesLambda = new lambdaPython.PythonFunction(
             this,
-            "DatabaseSchemaConnectionFn",
+            "BackgroundGetSourceTablesLambda",
             {
-                role: databaseSchemaRole,
+                role: backgroundGetSourceTablesRole,
                 vpc: vpc,
                 securityGroups: [rdsSecurityGroup],
                 vpcSubnets: {
@@ -675,18 +695,63 @@ export class AppStack extends cdk.Stack {
                 runtime: cdk.aws_lambda.Runtime.PYTHON_3_9,
                 handler: "lambda_handler",
                 index: "main.py",
-                entry: "../api/archive/source/get-schema",
+                entry: "../functions/async-get-schema",
+                timeout: cdk.Duration.minutes(5),
+                environment: {
+                    REGION: awsRegion,
+                    DYNAMODB_TABLE: fetchTablesSchemaAsync.tableName,
+                },
+            }
+        );
+        // END: Background Lambda Function to get Tables from Source Database
+
+        // START: API to get tables from Source Database, calls background function to get tables asynchronous
+        const apiGetDatabaseSourceTablesRole = new iam.Role(this, "ApiGetDatabaseSourceTablesRole", {
+            roleName: "ApiGetDatabaseSourceTablesRole",
+            assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
+            description: "IAM Role for the Test Connection Lambda",
+            managedPolicies: [
+                iam.ManagedPolicy.fromAwsManagedPolicyName(
+                    "service-role/AWSLambdaBasicExecutionRole"
+                ),
+            ],
+        });
+
+        apiGetDatabaseSourceTablesRole.addToPolicy(new iam.PolicyStatement({
+            actions: ["lambda:InvokeFunction"],
+            resources: [backgroundGetSourceTablesLambda.functionArn],
+        }));
+
+        apiGetDatabaseSourceTablesRole.addToPolicy(new iam.PolicyStatement({
+            actions: ["dynamodb:PutItem"],
+            resources: [fetchTablesSchemaAsync.tableArn],
+        }));
+
+        const apiGetDatabaseSourceTablesLambda = new lambdaPython.PythonFunction(
+            this,
+            "ApiGetDatabaseSourceTablesLambda",
+            {
+                role: apiGetDatabaseSourceTablesRole,
+                runtime: cdk.aws_lambda.Runtime.PYTHON_3_9,
+                handler: "lambda_handler",
+                index: "main.py",
+                entry: "../api/archive/source/get-tables-async",
                 timeout: cdk.Duration.seconds(30),
-                environment: {},
+                environment: {
+                    REGION: awsRegion,
+                    BACKGROUND_FUNCTION: backgroundGetSourceTablesLambda.functionArn,
+                    DYNAMODB_TABLE: fetchTablesSchemaAsync.tableName,
+                },
             }
         );
 
-        new ApiGatewayV2LambdaConstruct(this, "DatabaseSchema" + "ApiGateway", {
-            lambdaFn: this.databaseSchemaLambda,
-            routePath: "/api/archive/source/get-schema",
+        new ApiGatewayV2LambdaConstruct(this, "ApiDatabaseSourceTablesRoute", {
+            lambdaFn: apiGetDatabaseSourceTablesLambda,
+            routePath: "/api/archive/source/get-tables-async",
             methods: [apigwv2.HttpMethod.POST],
             api: api.apiGatewayV2,
         });
+        // END: API to get tables from Source Database, calls background function to get tables asynchronous
 
         /*
          * END
@@ -702,6 +767,40 @@ export class AppStack extends cdk.Stack {
          */
 
         const apis = [
+            {
+                name: "TablesStatus",
+                runtime: cdk.aws_lambda.Runtime.PYTHON_3_9,
+                handler: "lambda_handler",
+                index: "main.py",
+                entry: "../api/archive/source/get-tables-async/status",
+                timeout: cdk.Duration.seconds(30),
+                environment: {
+                    DYNAMODB_TABLE: fetchTablesSchemaAsync.tableName,
+                },
+                routePath: "/api/archive/source/get-tables-async/status",
+                methods: [apigwv2.HttpMethod.GET],
+                api: api.apiGatewayV2,
+                iamInlinePolicy: [
+                    getItemAsyncTable
+                ],
+            },
+            {
+                name: "TablesResult",
+                runtime: cdk.aws_lambda.Runtime.PYTHON_3_9,
+                handler: "lambda_handler",
+                index: "main.py",
+                entry: "../api/archive/source/get-tables-async/results",
+                timeout: cdk.Duration.seconds(30),
+                environment: {
+                    DYNAMODB_TABLE: fetchTablesSchemaAsync.tableName,
+                },
+                routePath: "/api/archive/source/get-tables-async/results",
+                methods: [apigwv2.HttpMethod.GET],
+                api: api.apiGatewayV2,
+                iamInlinePolicy: [
+                    getItemAsyncTable
+                ],
+            },
             {
                 name: "CreateArchive",
                 runtime: cdk.aws_lambda.Runtime.PYTHON_3_9,

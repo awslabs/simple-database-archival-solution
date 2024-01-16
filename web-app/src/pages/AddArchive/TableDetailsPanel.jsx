@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-import { useState } from 'react';
+import {useState} from 'react';
 import {
     Button,
     Header,
@@ -26,14 +26,14 @@ import {
     ExpandableSection,
     StatusIndicator
 } from '@cloudscape-design/components';
-import { API } from "aws-amplify";
+import {API} from "aws-amplify";
 
 export default function TableDetailsPanel({
-    databaseConnectionState,
-    setDatabaseConnectionState,
-    databaseConnected,
-    setGetTables
-}) {
+                                              databaseConnectionState,
+                                              setDatabaseConnectionState,
+                                              databaseConnected,
+                                              setGetTables
+                                          }) {
 
     const [tables, setTables] = useState([]);
     const [selectedItems] = useState([]);
@@ -53,30 +53,52 @@ export default function TableDetailsPanel({
         return res;
     }
 
-    const getDatabaseSchema = async (e) => {
+    const getDatabaseSchema = async () => {
         setGettingSchema(true);
-        await API.post("api", "api/archive/source/get-schema", databaseConnectionState)
-            .then(response => {
-                setGettingSchemaFailed(false)
-                console.log(response)
-                const tableChunks = sliceIntoChunks(response.tables, 4)
+        let response;
+        try {
+            // Initial request to start the job
+            const startJobResponse = await API.post("api", "api/archive/source/get-tables-async", databaseConnectionState);
+            const jobId = startJobResponse["job_id"];
+
+            // Function to check job status
+            const checkJobStatus = async () => {
+                const statusJobResponse = await API.get("api", `api/archive/source/get-tables-async/status?job_id=${jobId}`);
+                return statusJobResponse.status;
+            };
+
+            // Polling for job completion
+            let jobStatus = 'Pending';
+            while (jobStatus === 'Pending') {
+                await new Promise(resolve => setTimeout(resolve, 5000)); // Wait for 5 seconds before checking status
+                jobStatus = await checkJobStatus();
+            }
+
+            if (jobStatus === 'Completed') {
+                // Retrieve results once the job is completed
+                response = await API.get("api", `api/archive/source/get-tables-async/results?job_id=${jobId}`);
+                const tableChunks = sliceIntoChunks(response.tables, 4);
                 setTables(tableChunks);
-                setPageCount((response.tables.length / 4).toFixed())
-                setGettingSchema(false);
-                updateNestedProps(response)
-                setGetTables(true)
-            })
-            .catch(error => {
-                setGettingSchemaFailed(true)
-                setGettingSchema(false);
-            })
+                setPageCount((response.tables.length / 4).toFixed());
+                setGetTables(true);
+            } else {
+                throw new Error('Job failed with status: ' + jobStatus);
+            }
+        } catch (error) {
+            console.error('Error getting database tables:', error);
+            setGettingSchemaFailed(true);
+        } finally {
+            setGettingSchema(false);
+            updateNestedProps(response);
+        }
     };
+
 
     const updateNestedProps = (data) => {
         setDatabaseConnectionState(current => {
-            const body = { ...current.body };
+            const body = {...current.body};
             body.tables = data.tables;
-            return { ...current, body };
+            return {...current, body};
         });
     };
 
@@ -126,7 +148,7 @@ export default function TableDetailsPanel({
                                             <Box textAlign="center" color="inherit">
                                                 <b>No resources</b>
                                                 <Box
-                                                    padding={{ bottom: "s" }}
+                                                    padding={{bottom: "s"}}
                                                     variant="p"
                                                     color="inherit"
                                                 >
@@ -149,8 +171,8 @@ export default function TableDetailsPanel({
                 ]
             }}
             cardsPerRow={[
-                { cards: 1 },
-                { minWidth: 500, cards: 1 }
+                {cards: 1},
+                {minWidth: 500, cards: 1}
             ]}
             items={tables[currentPageIndex - 1]}
             loadingText="Loading Schema"
@@ -176,7 +198,7 @@ export default function TableDetailsPanel({
                             <SpaceBetween direction="horizontal" size="xs">
                                 {gettingSchema ? (
                                     <Button variant="primary">
-                                        <Spinner />
+                                        <Spinner/>
                                     </Button>
                                 ) : (
                                     <Button
@@ -197,11 +219,11 @@ export default function TableDetailsPanel({
             }
             pagination={
                 <Pagination
-                    onChange={({ detail }) =>
+                    onChange={({detail}) =>
                         setCurrentPageIndex(detail.currentPageIndex)
                     }
                     currentPageIndex={currentPageIndex}
-                    pagesCount={pageCount} />
+                    pagesCount={pageCount}/>
             }
 
 
