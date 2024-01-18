@@ -69,7 +69,7 @@ export default function TableDetailsPanel({
 
             // Polling for job completion
             let jobStatus = 'Pending';
-            while (jobStatus === 'Pending') {
+            while (jobStatus === 'Pending' || jobStatus === 'In Progress') {
                 await new Promise(resolve => setTimeout(resolve, 5000)); // Wait for 5 seconds before checking status
                 jobStatus = await checkJobStatus();
             }
@@ -92,7 +92,6 @@ export default function TableDetailsPanel({
             updateNestedProps(response);
         }
     };
-
 
     const updateNestedProps = (data) => {
         setDatabaseConnectionState(current => {
