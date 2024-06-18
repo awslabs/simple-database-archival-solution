@@ -13,56 +13,52 @@
  * permissions and limitations under the License.
  */
 
-
 import { useState } from 'react';
 import {
-    AppLayout,
-    ContentLayout,
-    SpaceBetween,
-    Header,
-    Flashbar
-} from "@cloudscape-design/components";
-import { SideBarNavigation } from "../../components/SideBarNavigation";
-import { PageHeader } from "../../components/common-components";
-import { FormContent } from "./FormContent";
+	AppLayout,
+	ContentLayout,
+	SpaceBetween,
+	Header,
+	Flashbar,
+} from '@cloudscape-design/components';
+import { SideBarNavigation } from '../../components/SideBarNavigation';
+import { PageHeader } from '../../components/common-components';
+import { FormContent } from './FormContent';
 
 function AddArchive() {
+	const [flashbarItems, setFlashbarItems] = useState([]);
+	const [enableFlashbar, setEnableFlashbar] = useState(false);
 
-    const [flashbarItems, setFlashbarItems] = useState([]);
-    const [enableFlashbar, setEnableFlashbar] = useState(false);
-
-    return (
-        <AppLayout
-            contentHeader={<PageHeader buttons={[]} />}
-            content={
-                <ContentLayout
-                    header={
-                        <SpaceBetween size="m">
-                            <Header
-                                variant="h1"
-                                description=""
-                            >
-                                Add Archive
-                            </Header>
-                            {
-                                enableFlashbar ?
-                                    <Flashbar items={flashbarItems} /> : <></>
-                            }
-                        </SpaceBetween>
-                    }
-                >
-                    <FormContent
-                        flashbarItems={flashbarItems}
-                        setFlashbarItems={setFlashbarItems}
-                        setEnableFlashbar={setEnableFlashbar}
-                    />
-                </ContentLayout>
-            }
-            navigation={<SideBarNavigation activeHref="/add-archive" />}
-            toolsHide={true}
-            contentType="default"
-        />
-    );
+	return (
+		<AppLayout
+			contentHeader={<PageHeader buttons={[]} />}
+			content={
+				<ContentLayout
+					header={
+						<SpaceBetween size="m">
+							<Header variant="h1" description="">
+								Add Archive
+							</Header>
+							{enableFlashbar ? (
+								<Flashbar items={flashbarItems} />
+							) : (
+								<></>
+							)}
+						</SpaceBetween>
+					}
+				>
+					<FormContent
+						flashbarItems={flashbarItems}
+						setFlashbarItems={setFlashbarItems}
+						setEnableFlashbar={setEnableFlashbar}
+					/>
+				</ContentLayout>
+			}
+			navigation={<SideBarNavigation activeHref="/add-archive" />}
+			toolsHide={true}
+			contentType="default"
+		/>
+	);
 }
 
 export default AddArchive;

@@ -14,13 +14,13 @@
  */
 
 export const paginationLabels = {
-    nextPageLabel: "Next page",
-    previousPageLabel: "Previous page",
-    pageLabel: (pageNumber) => `Page ${pageNumber} of all pages`,
+	nextPageLabel: 'Next page',
+	previousPageLabel: 'Previous page',
+	pageLabel: (pageNumber) => `Page ${pageNumber} of all pages`,
 };
 
 export const originsSelectionLabels = {
-    itemSelectionLabel: (data, row) => `select ${row.name}`,
-    allItemsSelectionLabel: () => 'select all',
-    selectionGroupLabel: 'Origins selection',
+	itemSelectionLabel: (data, row) => `select ${row.name}`,
+	allItemsSelectionLabel: () => 'select all',
+	selectionGroupLabel: 'Origins selection',
 };

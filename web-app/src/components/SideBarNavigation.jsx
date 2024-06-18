@@ -13,52 +13,49 @@
  * permissions and limitations under the License.
  */
 
-import { useHistory } from "react-router-dom";
-import { SideNavigation, Grid } from "@cloudscape-design/components";
+import { useHistory } from 'react-router-dom';
+import { SideNavigation, Grid } from '@cloudscape-design/components';
 
-export const navHeader = { text: "Data Archive", href: "/" };
+export const navHeader = { text: 'Data Archive', href: '/' };
 
 export const navItems = [
-    {
-        type: "link",
-        text: "Home",
-        href: "/",
-    },
+	{
+		type: 'link',
+		text: 'Home',
+		href: '/',
+	},
 
-    {
-        type: "link",
-        text: "Add Archive",
-        href: "/add-archive",
-    },
-
+	{
+		type: 'link',
+		text: 'Add Archive',
+		href: '/add-archive',
+	},
 ];
 
 const defaultOnFollowHandler = (ev) => {
-    ev.preventDefault();
-    LinkTo();
+	ev.preventDefault();
+	LinkTo();
 };
 
 function LinkTo(ev) {
-    const history = useHistory();
+	const history = useHistory();
 }
 
 export function SideBarNavigation({
-    activeHref,
-    header = navHeader,
-    items = navItems,
-    onFollowHandler = defaultOnFollowHandler,
+	activeHref,
+	header = navHeader,
+	items = navItems,
+	onFollowHandler = defaultOnFollowHandler,
 }) {
-
-
-    return (
-        <>
-            <SideNavigation
-                items={items}
-                header={header}
-                activeHref={activeHref}
-                onFollow={onFollowHandler}
-            />
-            <Grid container justify="center"></Grid>
-        </>
-    );
+	return (
+		<>
+			<SideNavigation
+				items={items}
+				header={header}
+				activeHref={activeHref}
+				onFollow={onFollowHandler}
+			/>
+			<Grid container justify="center"></Grid>
+		</>
+	);
 }

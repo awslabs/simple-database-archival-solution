@@ -13,52 +13,54 @@
  * permissions and limitations under the License.
  */
 
-import Moment from "react-moment";
-import Badge from "@cloudscape-design/components/badge";
+import Moment from 'react-moment';
+import Badge from '@cloudscape-design/components/badge';
 
 export const ARCHIVES_COLUMN_DEFINITIONS = [
-    {
-        id: "name",
-        header: "Archive Name",
-        cell: (item) => item.archive_name,
-    },
+	{
+		id: 'name',
+		header: 'Archive Name',
+		cell: (item) => item.archive_name,
+	},
 
-    {
-        id: "id",
-        header: "Archive ID",
-        cell: (item) => item.id,
-    },
+	{
+		id: 'id',
+		header: 'Archive ID',
+		cell: (item) => item.id,
+	},
 
-    {
-        id: "type",
-        header: "Time Submitted",
-        cell: (item) => (
-            <Moment format="MMMM D, YYYY - h:mm:ss a">{item.time_submitted}</Moment>
-        ),
-    },
-    {
-        id: "archive_status",
-        header: "Status",
-        cell: (item) => {
-            if (item.archive_status === "Failed") {
-                return <Badge color="red">Failed</Badge>;
-            } else if (item.archive_status === "Intake Queue") {
-                return <Badge>Intake Queue</Badge>;
-            } else if (item.archive_status === "Validating") {
-                return <Badge color="blue">Validating</Badge>;
-            } else if (item.archive_status === "Archiving") {
-                return <Badge color="blue">Archiving</Badge>;
-            } else if (item.archive_status === "Archive Queue") {
-                return <Badge>Archive Queue</Badge>;
-            } else if (item.archive_status === "Stage Queue") {
-                return <Badge>Stage Queue</Badge>;
-            } else if (item.archive_status === "Staging Archive") {
-                return <Badge color="blue">Staging Archive</Badge>;
-            } else if (item.archive_status === "Validation Queue") {
-                return <Badge>Validation Queue</Badge>;
-            } else if (item.archive_status === "Archived") {
-                return <Badge color="green">Archived</Badge>;
-            }
-        },
-    },
+	{
+		id: 'type',
+		header: 'Time Submitted',
+		cell: (item) => (
+			<Moment format="MMMM D, YYYY - h:mm:ss a">
+				{item.time_submitted}
+			</Moment>
+		),
+	},
+	{
+		id: 'archive_status',
+		header: 'Status',
+		cell: (item) => {
+			if (item.archive_status === 'Failed') {
+				return <Badge color="red">Failed</Badge>;
+			} else if (item.archive_status === 'Intake Queue') {
+				return <Badge>Intake Queue</Badge>;
+			} else if (item.archive_status === 'Validating') {
+				return <Badge color="blue">Validating</Badge>;
+			} else if (item.archive_status === 'Archiving') {
+				return <Badge color="blue">Archiving</Badge>;
+			} else if (item.archive_status === 'Archive Queue') {
+				return <Badge>Archive Queue</Badge>;
+			} else if (item.archive_status === 'Stage Queue') {
+				return <Badge>Stage Queue</Badge>;
+			} else if (item.archive_status === 'Staging Archive') {
+				return <Badge color="blue">Staging Archive</Badge>;
+			} else if (item.archive_status === 'Validation Queue') {
+				return <Badge>Validation Queue</Badge>;
+			} else if (item.archive_status === 'Archived') {
+				return <Badge color="green">Archived</Badge>;
+			}
+		},
+	},
 ];

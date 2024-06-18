@@ -14,15 +14,15 @@
  */
 
 export const TAGS_COLUMN_DEFINITIONS = [
-    {
-        id: "key",
-        header: "Key",
-        cell: (item) => item.key,
-        width: 300,
-    },
-    {
-        id: "value",
-        header: "Value",
-        cell: (item) => item.value || "-",
-    },
+	{
+		id: 'key',
+		header: 'Key',
+		cell: (item) => item.key,
+		width: 300,
+	},
+	{
+		id: 'value',
+		header: 'Value',
+		cell: (item) => item.value || '-',
+	},
 ];
