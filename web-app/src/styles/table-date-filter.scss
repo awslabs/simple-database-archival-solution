@@ -12,18 +12,18 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
- 
+
 @use '~@cloudscape-design/design-tokens' as cs;
 @use './base';
 
 .date-form,
 .date-time-form {
-  display: grid;
-  grid-template-columns: auto;
-  gap: cs.$space-scaled-s;
+	display: grid;
+	grid-template-columns: auto;
+	gap: cs.$space-scaled-s;
 }
 @media (min-width: 688px) {
-  .date-time-form {
-    grid-template-columns: min-content minmax(100px, max-content);
-  }
+	.date-time-form {
+		grid-template-columns: min-content minmax(100px, max-content);
+	}
 }

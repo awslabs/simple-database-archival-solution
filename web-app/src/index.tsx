@@ -13,53 +13,55 @@
  * permissions and limitations under the License.
  */
 
-import { Amplify, Auth } from "aws-amplify";
-import React from "react";
-import ReactDOM from "react-dom";
-import App from "./App";
-import reportWebVitals from "./reportWebVitals";
+import { Amplify, Auth } from 'aws-amplify';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App';
+import reportWebVitals from './reportWebVitals';
 
 let basePath: string;
-if (process.env.NODE_ENV === "production") {
-  basePath = `${window.location.origin}/`;
+if (process.env.NODE_ENV === 'production') {
+	basePath = `${window.location.origin}/`;
 } else {
-  basePath = process.env.REACT_APP_API_URL || "";
+	basePath = process.env.REACT_APP_API_URL || '';
 }
 
 fetch(`${basePath}/api/amplify-config`).then(async (response) => {
-  const amplifyConfig = await response.json();
-  Amplify.configure({
-    Auth: {
-      mandatorySignIn: true,
-      region: amplifyConfig.region,
-      userPoolId: amplifyConfig.userPoolId,
-      identityPoolId: amplifyConfig.identityPoolId,
-      userPoolWebClientId: amplifyConfig.appClientId,
-    },
-    API: {
-      endpoints: [
-        {
-          name: "api",
-          endpoint: basePath,
-          region: amplifyConfig.region,
-          custom_header: async () => {
-            return {
-              Authorization: `Bearer ${(await Auth.currentSession())
-                .getIdToken()
-                .getJwtToken()}`,
-            };
-          },
-        },
-      ],
-    },
-  });
+	const amplifyConfig = await response.json();
+	Amplify.configure({
+		Auth: {
+			mandatorySignIn: true,
+			region: amplifyConfig.region,
+			userPoolId: amplifyConfig.userPoolId,
+			identityPoolId: amplifyConfig.identityPoolId,
+			userPoolWebClientId: amplifyConfig.appClientId,
+		},
+		API: {
+			endpoints: [
+				{
+					name: 'api',
+					endpoint: basePath,
+					region: amplifyConfig.region,
+					custom_header: async () => {
+						return {
+							Authorization: `Bearer ${(
+								await Auth.currentSession()
+							)
+								.getIdToken()
+								.getJwtToken()}`,
+						};
+					},
+				},
+			],
+		},
+	});
 
-  ReactDOM.render(
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>,
-    document.getElementById("root")
-  );
+	ReactDOM.render(
+		<React.StrictMode>
+			<App />
+		</React.StrictMode>,
+		document.getElementById('root')
+	);
 
-  reportWebVitals();
+	reportWebVitals();
 });

@@ -14,66 +14,68 @@
  */
 
 import {
-    Button,
-    ButtonDropdown,
-    Header,
-    SpaceBetween,
-
-} from "@cloudscape-design/components";
+	Button,
+	ButtonDropdown,
+	Header,
+	SpaceBetween,
+} from '@cloudscape-design/components';
 import {
-    getHeaderCounterText,
-    getServerHeaderCounterText,
-} from "./table-counter-strings";
+	getHeaderCounterText,
+	getServerHeaderCounterText,
+} from './table-counter-strings';
 
 function getCounter(props) {
-    if (props.counter) {
-        return props.counter;
-    }
-    if (!props.totalItems) {
-        return null;
-    }
-    if (props.serverSide) {
-        return getServerHeaderCounterText(props.totalItems, props.selectedItems);
-    }
-    return getHeaderCounterText(props.totalItems, props.selectedItems);
+	if (props.counter) {
+		return props.counter;
+	}
+	if (!props.totalItems) {
+		return null;
+	}
+	if (props.serverSide) {
+		return getServerHeaderCounterText(
+			props.totalItems,
+			props.selectedItems
+		);
+	}
+	return getHeaderCounterText(props.totalItems, props.selectedItems);
 }
 
 export const PageHeader = ({ buttons }) => {
-    return (
-        <Header
-            variant="h1"
-            actions={
-                <SpaceBetween direction="horizontal" size="xs">
-                    {buttons.map((button, key) =>
-                        !button.items ? (
-                            <Button
-                                href={button.href || ""}
-                                disabled={button.disabled || false}
-                                key={key}
-                            >
-                                {button.text}
-                            </Button>
-                        ) : (
-                            <ButtonDropdown items={button.items} key={key}>
-                                {button.text}
-                            </ButtonDropdown>
-                        )
-                    )}
-                </SpaceBetween>
-            }
-        ></Header>
-    );
+	return (
+		<Header
+			variant="h1"
+			actions={
+				<SpaceBetween direction="horizontal" size="xs">
+					{buttons.map((button, key) =>
+						!button.items ? (
+							<Button
+								href={button.href || ''}
+								disabled={button.disabled || false}
+								key={key}
+							>
+								{button.text}
+							</Button>
+						) : (
+							<ButtonDropdown items={button.items} key={key}>
+								{button.text}
+							</ButtonDropdown>
+						)
+					)}
+				</SpaceBetween>
+			}
+		></Header>
+	);
 };
 
 export const TableHeader = (props) => {
-    return (
-        <Header
-            variant={props.variant}
-            counter={getCounter(props)}
-            description={props.description}
-            actions={props.actionButtons}
-        >
-            {props.title}
-        </Header>
-    );
+	return (
+		<Header
+			variant={props.variant}
+			counter={getCounter(props)}
+			description={props.description}
+			actions={props.actionButtons}
+		>
+			{props.title}
+		</Header>
+	);
 };

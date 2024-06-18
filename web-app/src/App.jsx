@@ -13,35 +13,35 @@
  * permissions and limitations under the License.
  */
 
-import React from "react";
-import "@aws-amplify/ui-react/styles.css";
-import { withAuthenticator } from "@aws-amplify/ui-react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import { TopBarNavigation } from "./components/TopBarNavigation";
-import Home from "./pages/Home";
-import AddArchive from "./pages/AddArchive";
-import ViewArchive from "./pages/ViewArchive";
+import React from 'react';
+import '@aws-amplify/ui-react/styles.css';
+import { withAuthenticator } from '@aws-amplify/ui-react';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import { TopBarNavigation } from './components/TopBarNavigation';
+import Home from './pages/Home';
+import AddArchive from './pages/AddArchive';
+import ViewArchive from './pages/ViewArchive';
 
 function App() {
-    return (
-        <BrowserRouter>
-            <CssBaseline />
-            <TopBarNavigation />
-            <Switch>
-                <Route path="/" exact={true} component={Home} />
-                <Route path="/add-archive" component={AddArchive} />
-                <Route
-                    path="/view/:id/view/:archive_name/view/:time_submitted/view/:status/view/:mode"
-                    component={ViewArchive}
-                />
-            </Switch>
-        </BrowserRouter>
-    );
+	return (
+		<BrowserRouter>
+			<CssBaseline />
+			<TopBarNavigation />
+			<Switch>
+				<Route path="/" exact={true} component={Home} />
+				<Route path="/add-archive" component={AddArchive} />
+				<Route
+					path="/view/:id/view/:archive_name/view/:time_submitted/view/:status/view/:mode"
+					component={ViewArchive}
+				/>
+			</Switch>
+		</BrowserRouter>
+	);
 }
 
 const MyTheme = {
-    hideSignUp: true,
+	hideSignUp: true,
 };
 
 export default withAuthenticator(App, MyTheme);

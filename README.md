@@ -12,15 +12,15 @@ Simple Database Archiving Solution (SDAS) is an open source solution, which you 
 
 As businesses accumulate more and more data over time, the need for effective database archiving solutions has become increasingly important, for example moving older, rarely used data to an archive. Businesses can reduce the size of their active databases, which can improve performance and reduce storage costs. Archiving also helps organizations meet legal and regulatory requirements for data retention, as well as ensure that important data is available for future use and discovery, if necessary. Out of the box, SDAS provides the following key features:
 
-- Support for Oracle, Microsoft SQL Server, MySQL or PostgreSQL
-- Identify the data type and table schema
-- Validate the data on the target after the archiving process has completed
-- Ability to configure WORM (“Write Once Read Many”)
-- Ability to defined data retention period for the data
-- Detailed information about the status of the data
-- Perform various data validation and integrity checks
-- Make it simple for operation to ingest and archive database
-- Ability to preview data archived in Amazon S3
+-   Support for Oracle, Microsoft SQL Server, MySQL or PostgreSQL
+-   Identify the data type and table schema
+-   Validate the data on the target after the archiving process has completed
+-   Ability to configure WORM (“Write Once Read Many”)
+-   Ability to defined data retention period for the data
+-   Detailed information about the status of the data
+-   Perform various data validation and integrity checks
+-   Make it simple for operation to ingest and archive database
+-   Ability to preview data archived in Amazon S3
 
 ## Give SDAS a try!
 
@@ -108,7 +108,6 @@ HOST=example.com
 REACT_APP_API_URL=https://{REACT_APP_API_URL}/
 ```
 
-
 ## 4. Using SDAS
 
 ### 4.1. Start and Discover
@@ -173,11 +172,11 @@ npm run destroy
 
 The top level project structure follows a responsibility structure:
 
-- `/api` - contains lambda functions for the api
-- `/deploy` - contains cloud development kit (CDK) to deploy the solution
-- `/web-app` - contains the SPA web client for the application
-- `/functions` - contains the lambda functions not associated with APIs
-- `/step-functions` - contains the lambda functions for AWS Step Functions
+-   `/api` - contains lambda functions for the api
+-   `/deploy` - contains cloud development kit (CDK) to deploy the solution
+-   `/web-app` - contains the SPA web client for the application
+-   `/functions` - contains the lambda functions not associated with APIs
+-   `/step-functions` - contains the lambda functions for AWS Step Functions
 
 ---
 
@@ -187,53 +186,52 @@ The top level project structure follows a responsibility structure:
 
 This section covers data type conversions that SDAS processes between PostgreSQL and Athena databases.
 
-| Source Data Type              | Supported? | SDAS Data Type |
-|-------------------------------|------------|---------------|
-| ARRAY                         | Y          | array         |
-| bigserial                     | Y          | int           |
-| bigint                        | Y          | bigint        |
-| bit [ (n) ]                   | Y          | string        |
-| bit varying [ (n) ]           | Y          | string        |
-| boolean                       | Y          | boolean       |
-| box                           | Y          | string        |
-| bytea                         | Y          | binary        |
-| character varying [ (n) ]     | Y          | string        |
-| cidr                          | Y          | string        |
-| circle                        | Y          | string        |
-| date                          | Y          | date          |
-| double precision              | Y          | decimal(38,6) |
-| inet                          | Y          | string        |
-| integer                       | Y          | int           |
-| interval [ fields ] [ (p) ]   | Y          | string        |
-| json                          | Y          | string        |
-| jsonb                         | Y          | string        |
-| lseg                          | Y          | string        |
-| macaddr                       | Y          | string        |
-| macaddr8                      | Y          | string        |
-| money                         | Y          | decimal(19,4) |
-| numeric                       | Y          | decimal(38,18)|
-| path                          | Y          | string        |
-| pg_lsn                        | Y          | string        |
-| pg_snapshot                   | Y          | string        |
-| point                         | Y          | string        |
-| polygon                       | Y          | string        |
-| real                          | Y          | decimal(19,4) |
-| serial                        | Y          | int           |
-| smallint                      | Y          | smallint      |
-| smallserial                   | Y          | int           |
-| text                          | Y          | string        |
-| time                          | Y          | string        |
-| time with time zone           | Y          | string        |
-| timestamp                     | Y          | string        |
-| timestamp with time zone      | Y          | string        |
-| timestamp without time zone   | Y          | string        |
-| tsquery                       | Y          | string        |
-| tsvector                      | Y          | string        |
-| txid_snapshot                 | Y          | string        |
-| USER-DEFINED                  | Y          | string        |
-| uuid                          | Y          | string        |
-| xml                           | Y          | string        |
-
+| Source Data Type            | Supported? | SDAS Data Type |
+| --------------------------- | ---------- | -------------- |
+| ARRAY                       | Y          | array          |
+| bigserial                   | Y          | int            |
+| bigint                      | Y          | bigint         |
+| bit [ (n) ]                 | Y          | string         |
+| bit varying [ (n) ]         | Y          | string         |
+| boolean                     | Y          | boolean        |
+| box                         | Y          | string         |
+| bytea                       | Y          | binary         |
+| character varying [ (n) ]   | Y          | string         |
+| cidr                        | Y          | string         |
+| circle                      | Y          | string         |
+| date                        | Y          | date           |
+| double precision            | Y          | decimal(38,6)  |
+| inet                        | Y          | string         |
+| integer                     | Y          | int            |
+| interval [ fields ] [ (p) ] | Y          | string         |
+| json                        | Y          | string         |
+| jsonb                       | Y          | string         |
+| lseg                        | Y          | string         |
+| macaddr                     | Y          | string         |
+| macaddr8                    | Y          | string         |
+| money                       | Y          | decimal(19,4)  |
+| numeric                     | Y          | decimal(38,18) |
+| path                        | Y          | string         |
+| pg_lsn                      | Y          | string         |
+| pg_snapshot                 | Y          | string         |
+| point                       | Y          | string         |
+| polygon                     | Y          | string         |
+| real                        | Y          | decimal(19,4)  |
+| serial                      | Y          | int            |
+| smallint                    | Y          | smallint       |
+| smallserial                 | Y          | int            |
+| text                        | Y          | string         |
+| time                        | Y          | string         |
+| time with time zone         | Y          | string         |
+| timestamp                   | Y          | string         |
+| timestamp with time zone    | Y          | string         |
+| timestamp without time zone | Y          | string         |
+| tsquery                     | Y          | string         |
+| tsvector                    | Y          | string         |
+| txid_snapshot               | Y          | string         |
+| USER-DEFINED                | Y          | string         |
+| uuid                        | Y          | string         |
+| xml                         | Y          | string         |
 
 ## Troubleshooting
 

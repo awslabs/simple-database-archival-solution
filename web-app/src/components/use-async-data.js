@@ -13,31 +13,35 @@
  * permissions and limitations under the License.
  */
 
-import { useState, useEffect } from "react";
-import { API } from "aws-amplify";
+import { useState, useEffect } from 'react';
+import { API } from 'aws-amplify';
 
 export function UseAsyncData(loadCallback) {
-    const [items, setItems] = useState([]);
-    const [data, setData] = useState([]);
-    const [loading, setLoading] = useState(true);
-    useEffect(() => {
-        let rendered = true;
-        const getData = async () => {
-            const response = await API.get("api", "/api/archives/list", undefined);
-            setData(response.data.data.listItems.items);
-            setLoading(false);
-        };
-        getData();
-        loadCallback().then((items) => {
-            if (rendered) {
-                setItems(items);
-                setLoading(false);
-            }
-        });
-        return () => {
-            rendered = false;
-        };
-    }, []);
+	const [items, setItems] = useState([]);
+	const [data, setData] = useState([]);
+	const [loading, setLoading] = useState(true);
+	useEffect(() => {
+		let rendered = true;
+		const getData = async () => {
+			const response = await API.get(
+				'api',
+				'/api/archives/list',
+				undefined
+			);
+			setData(response.data.data.listItems.items);
+			setLoading(false);
+		};
+		getData();
+		loadCallback().then((items) => {
+			if (rendered) {
+				setItems(items);
+				setLoading(false);
+			}
+		});
+		return () => {
+			rendered = false;
+		};
+	}, []);
 
-    return [data, loading];
+	return [data, loading];
 }
