@@ -13,9 +13,9 @@
  * permissions and limitations under the License.
  */
 import * as cdk from "aws-cdk-lib";
-import { Construct } from "constructs";
+import {Construct} from "constructs";
 
-import { Wafv2BasicConstruct, WafV2Scope } from "./constructs/wafv2-basic-construct";
+import {Wafv2BasicConstruct, WafV2Scope} from "./constructs/wafv2-basic-construct";
 
 export class CfWafStack extends cdk.Stack {
     /**
@@ -33,24 +33,49 @@ export class CfWafStack extends cdk.Stack {
         // for deployments outside of us-east-1 deploy waf separately
         const wafv2CF = new Wafv2BasicConstruct(this, "Wafv2CF", {
             wafScope: WafV2Scope.CLOUDFRONT,
-            rules: [{ 
-                name: "AWS-AWSManagedRulesCommonRuleSet",
-                priority: 1, 
-                overrideAction: {
-                    none: {}
+            rules: [
+                {
+                    name: "AllowLargerRequestBodiesV2",
+                    priority: 0,
+                    action: {allow: {}},
+                    statement: {
+                        sizeConstraintStatement: {
+                            fieldToMatch: {body: {}},
+                            comparisonOperator: "LE",
+                            size: 90000,
+                            textTransformations: [
+                                {
+                                    priority: 0,
+                                    type: "NONE"
+                                }
+                            ]
+                        }
+                    },
+                    visibilityConfig: {
+                        cloudWatchMetricsEnabled: true,
+                        metricName: "AllowLargerRequestBodiesV2",
+                        sampledRequestsEnabled: true,
+                    },
                 },
-                statement: {
-                    managedRuleGroupStatement: { 
-                        name: "AWSManagedRulesCommonRuleSet",
-                        vendorName: "AWS", 
+                {
+                    name: "AWS-AWSManagedRulesCommonRuleSet",
+                    priority: 1,
+                    overrideAction: {
+                        none: {}
+                    },
+                    statement: {
+                        managedRuleGroupStatement: {
+                            name: "AWSManagedRulesCommonRuleSet",
+                            vendorName: "AWS",
+                        }
+                    },
+                    visibilityConfig: {
+                        cloudWatchMetricsEnabled: true,
+                        metricName: "awsCommonRules",
+                        sampledRequestsEnabled: true
                     }
-                },
-                visibilityConfig: {
-                    cloudWatchMetricsEnabled: true,
-                    metricName: "awsCommonRules",
-                    sampledRequestsEnabled: true 
-                } 
-            }],
+                }
+            ],
         });
 
         new cdk.aws_ssm.StringParameter(this, "waf_acl_arn", {
