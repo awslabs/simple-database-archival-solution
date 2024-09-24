@@ -1,11 +1,11 @@
 """
-Copyright 2023 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+Copyright 2024 Amazon.com, Inc. and its affiliates. All Rights Reserved.
 
 Licensed under the Amazon Software License (the "License").
 You may not use this file except in compliance with the License.
 A copy of the License is located at
 
-  http://aws.amazon.com/asl/
+  https://aws.amazon.com/asl/
 
 or in the "license" file accompanying this file. This file is distributed
 on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -33,23 +33,17 @@ def update_validation_count(archive_id):
 
     Raises:
     botocore.exceptions.ClientError: If there is an error with the AWS client.
-
-    Example Usage:
-    >>> update_validation_count("abc123")
     """
 
     parameter = ssm.get_parameter(
         Name='/archive/dynamodb-table', WithDecryption=True)
     table = dynamodb.Table(parameter['Parameter']['Value'])
 
-    dynamodb_response = table.get_item(Key={"id": archive_id})
-
-    validation_count = dynamodb_response["Item"]["counters"]["validation"]["validation_count"] + 1
-
+    # Instead of fetching and incrementing in the code, use ADD to increment atomically
     table.update_item(
         Key={'id': archive_id},
-        UpdateExpression="SET counters.validation.validation_count = :s",
-        ExpressionAttributeValues={':s': validation_count},
+        UpdateExpression="ADD counters.validation.validation_count :inc",
+        ExpressionAttributeValues={':inc': 1},
         ReturnValues="UPDATED_NEW"
     )
 
@@ -67,24 +61,6 @@ def lambda_handler(event, context):
 
     Raises:
     botocore.exceptions.ClientError: If there is an error with the AWS client.
-
-    Example Usage:
-    >>> event = {
-    "table": {
-    "archive_id": "abc123",
-    "table": "my_table",
-    "database": "my_database",
-    "database_engine": "oracle",
-    "oracle_owner": "my_owner",
-    "schema": [
-    {"key": "col1", "value": "string"},
-    {"key": "col2", "value": "number"},
-    {"key": "col3", "value": "string"}
-    ]
-    }
-    }
-    >>> context = None
-    >>> lambda_handler(event, context)
     """
     # GET SCHEMA from EVENT
     return_event = []
@@ -123,8 +99,7 @@ def lambda_handler(event, context):
 
     # Number Validation
     for schema in event["table"]["schema"][::-1]:
-        if schema["value"] == "decimal" or schema["value"] == "number" or schema["value"] == "decimal" or schema[
-            "value"] == "int":
+        if schema["value"] in ["decimal", "number", "int"]:
             update_validation_count(event["table"]["archive_id"])
             return_event.append({
                 "table": event["table"]["table"],

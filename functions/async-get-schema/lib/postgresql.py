@@ -112,6 +112,8 @@ def convert_schema(type):
         return "array"
     elif "USER-DEFINED" in type:
         return "string"
+    else:
+        return "string"
 
 
 class Connection:
