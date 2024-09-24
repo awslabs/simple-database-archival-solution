@@ -1,11 +1,11 @@
-""" 
-Copyright 2023 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+"""
+Copyright 2024 Amazon.com, Inc. and its affiliates. All Rights Reserved.
 
 Licensed under the Amazon Software License (the "License").
 You may not use this file except in compliance with the License.
 A copy of the License is located at
 
-  http://aws.amazon.com/asl/
+  https://aws.amazon.com/asl/
 
 or in the "license" file accompanying this file. This file is distributed
 on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -35,19 +35,23 @@ def lambda_handler(event, context):
     for message in event["Records"]:
         message_body = json.loads(message["body"])
 
+        # Fetch current state from DynamoDB
         dynamodb_response = table.get_item(Key={"id": message_body["archive_id"]})
-
-        validation_completed_increment = dynamodb_response["Item"][
-                                             "counters"]["validation"]["validation_completed"] + 1
         validation_count = dynamodb_response["Item"]["counters"]["validation"]["validation_count"]
 
-        table.update_item(
+        # Atomically increment the validation_completed counter
+        update_response = table.update_item(
             Key={'id': message_body["archive_id"]},
-            UpdateExpression="SET counters.validation.validation_completed = :s",
-            ExpressionAttributeValues={':s': validation_completed_increment},
+            UpdateExpression="ADD counters.validation.validation_completed :inc",
+            ExpressionAttributeValues={':inc': 1},
             ReturnValues="UPDATED_NEW"
         )
-        if (validation_completed_increment == validation_count):
+
+        # Get the updated validation_completed count
+        validation_completed_increment = update_response["Attributes"]["counters"]["validation"]["validation_completed"]
+
+        # Check if validation is complete
+        if validation_completed_increment == validation_count:
             table.update_item(
                 Key={'id': message_body["archive_id"]},
                 UpdateExpression="SET archive_status= :s",
@@ -55,12 +59,10 @@ def lambda_handler(event, context):
                 ReturnValues="UPDATED_NEW"
             )
 
-        print("message_body")
-        print(message_body)
+        print("message_body:", message_body)
+        print("receiptHandle:", message["receiptHandle"])
 
-        print("receiptHandle")
-        print(message["receiptHandle"])
-
+        # Delete the SQS message after processing
         sqs_client.delete_message(
             QueueUrl=sqs_parameter_value,
             ReceiptHandle=message["receiptHandle"]

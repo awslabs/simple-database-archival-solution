@@ -36,7 +36,7 @@ As businesses accumulate more and more data over time, the need for effective da
 
 To build and deploy SDAS the following tools are required.
 
-1. NodeJs >= 16
+1. NodeJs >= 18
 2. Python3 >= 3.9
 3. Docker
 
@@ -44,10 +44,9 @@ To build and deploy SDAS the following tools are required.
 
 The top level package.json is only for easy to use top level commands and doesn't contain any packages so there is no reason to install it. When pulling latest its always best to run a build all to ensure you have the latest code.
 
-To build the entire project run:
+To build the entire project run this command from the root of the cloned repository:
 
 ```bash
-# Execute this command from the root of the cloned repository.
 npm run build
 ```
 
@@ -65,21 +64,18 @@ If you are deploying to a new account or region you will need to bootstrap the C
 
 If you are installing the application into a region other than `us-east-1` you must bootstrap both regions. You can do this by setting the environment variable `CDK_DEPLOY_REGION` to us-east-1 and running the command below, then clearing the environment variable to pick up the set default. Or you can manually run the command with both regions provided. See statements below.
 
+Execute this command from the root of the cloned repository:
+
 ```bash
-# Execute this command from the root of the cloned repository.
 npm run deploy.bootstrap
 ```
 
 ### Deployment
 
 To deploy run the following command.
+Please substitute ${YOUR_ADMINISTRATOR_EMAIL} with the email address of your administrator. An email containing your password for signing in will be sent to that address. Execute this command from the root of the cloned repository. It will take approximately 10 mins for the stack to be deployed.
 
 ```bash
-# Please substitute ${YOUR_ADMINISTRATOR_EMAIL} with the email
-# address of your administrator. An email containing your password
-# for signing in will be sent to that address.
-# Execute this command from the root of the cloned repository.
-# It will take approximately 10 mins for the stack to be deployed.
 npm run deploy -- -c admin_email="${YOUR_ADMINISTRATOR_EMAIL}"
 ```
 
