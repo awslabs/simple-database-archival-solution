@@ -14,8 +14,8 @@
  */
 
 import React from 'react';
-import '@aws-amplify/ui-react/styles.css';
 import { withAuthenticator } from '@aws-amplify/ui-react';
+import { applyTheme } from '@cloudscape-design/components/theming';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { TopBarNavigation } from './components/TopBarNavigation';
@@ -23,13 +23,30 @@ import Home from './pages/Home';
 import AddArchive from './pages/AddArchive';
 import ViewArchive from './pages/ViewArchive';
 
+const theme = {
+	tokens: {
+		borderRadiusContainer: '0.125rem',
+		borderRadiusButton: '0.250rem',
+		borderRadiusInput: '0.250rem',
+	},
+	contexts: {
+		header: {
+			tokens: {
+				colorBackgroundContainerHeader: 'transparent',
+			},
+		},
+	},
+};
+
+applyTheme({ theme });
+
 function App() {
 	return (
 		<BrowserRouter>
 			<CssBaseline />
 			<TopBarNavigation />
 			<Switch>
-				<Route path="/" exact={true} component={Home} />
+				<Route path="/" exact component={Home} />
 				<Route path="/add-archive" component={AddArchive} />
 				<Route
 					path="/view/:id/view/:archive_name/view/:time_submitted/view/:status/view/:mode"
