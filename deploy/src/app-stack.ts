@@ -58,6 +58,10 @@ export class AppStack extends cdk.Stack {
         const awsAccountId = cdk.Stack.of(this).account;
         const awsRegion = cdk.Stack.of(this).region;
         const cognito = new CognitoWebNativeConstruct(this, 'Cognito', props);
+        const adminEmail = this.node.tryGetContext('admin_email');
+        if (!adminEmail) {
+            throw new Error('admin_email context parameter is required');
+        }
 
         /*
          * START
@@ -127,57 +131,99 @@ export class AppStack extends cdk.Stack {
 
         /*
          * START
-         * CREATE SDAS VPC
+         * CREATE OR USE EXISTING VPC
          */
 
-        const cwLogs = new logs.LogGroup(this, 'VpcFlowLogs', {
-            logGroupName: '/aws/vpc/flowlogs',
-            removalPolicy: RemovalPolicy.DESTROY,
-        });
 
-        const availabilityZones = cdk.Stack.of(this).availabilityZones;
+        const vpcId = this.node.tryGetContext('vpcId');
+        const subnetId = this.node.tryGetContext('subnetId');
+        const availabilityZone = this.node.tryGetContext('availabilityZone');
 
-        const vpc = new ec2.Vpc(this, `${props.stackName}-vpc`, {
-            cidr: '10.0.0.0/16',
-            natGateways: 1,
-            maxAzs: availabilityZones.length,
-            flowLogs: {
-                s3: {
-                    destination:
-                        ec2.FlowLogDestination.toCloudWatchLogs(cwLogs),
-                    trafficType: ec2.FlowLogTrafficType.ALL,
+        let vpc: ec2.IVpc;
+        let subnet: ec2.ISubnet | undefined = undefined;
+        let securityGroup: ec2.ISecurityGroup;
+
+        if (vpcId) {
+
+            if (!subnetId) {
+                throw new Error('If you provide a vpcId, you must also provide a subnetId');
+            }
+
+            if (!availabilityZone) {
+                throw new Error('If you provide a vpcId, you must also provide a availabilityZone for the subnetId');
+            }
+
+            // Use the existing VPC
+            vpc = ec2.Vpc.fromLookup(this, 'ExistingVpc', {vpcId});
+            subnet = ec2.Subnet.fromSubnetId(this, 'SpecificSubnet', subnetId);
+
+            // Create a new security group
+            securityGroup = new ec2.SecurityGroup(this, 'SDASSecurityGroup', {
+                vpc,
+                allowAllOutbound: true,
+                description: 'Default security group for the existing VPC',
+            });
+
+
+        } else {
+
+            const cwLogs = new logs.LogGroup(this, 'VpcFlowLogs', {
+                logGroupName: '/aws/vpc/flowlogs',
+                removalPolicy: RemovalPolicy.DESTROY,
+            });
+
+            const sdasVpc = new ec2.Vpc(this, `${props.stackName}-vpc`, {
+                cidr: '10.0.0.0/16',
+                natGateways: 1,
+                maxAzs: this.availabilityZones.length,
+                flowLogs: {
+                    s3: {
+                        destination: ec2.FlowLogDestination.toCloudWatchLogs(cwLogs),
+                        trafficType: ec2.FlowLogTrafficType.ALL,
+                    },
                 },
-            },
-            subnetConfiguration: [
-                {
-                    name: 'private-subnet-',
-                    subnetType: ec2.SubnetType.PRIVATE_WITH_NAT,
-                    cidrMask: 24,
-                },
-                {
-                    name: 'public-subnet-',
-                    subnetType: ec2.SubnetType.PUBLIC,
-                    cidrMask: 24,
-                },
-            ],
-        });
+                subnetConfiguration: [
+                    {
+                        name: 'private-subnet-',
+                        subnetType: ec2.SubnetType.PRIVATE_WITH_NAT,
+                        cidrMask: 24,
+                    },
+                    {
+                        name: 'public-subnet-',
+                        subnetType: ec2.SubnetType.PUBLIC,
+                        cidrMask: 24,
+                    },
+                ],
+            });
 
-        new cdk.CfnOutput(this, 'VpcId', {
-            value: vpc.vpcId,
-            exportName: 'MyVpcId',
-        });
+            vpc = sdasVpc;
 
-        const vpce = new ec2.GatewayVpcEndpoint(this, 'S3Vpce', {
-            service: ec2.GatewayVpcEndpointAwsService.S3,
-            vpc,
-        });
+            new cdk.CfnOutput(this, 'VpcId', {
+                value: sdasVpc.vpcId,
+                exportName: 'MyVpcId',
+            });
+
+            // For a new VPC, create a new security group
+            securityGroup = new ec2.SecurityGroup(this, 'SDASSecurityGroup', {
+                vpc: sdasVpc,
+                allowAllOutbound: true,
+                description: 'Default security group for the new VPC',
+            });
+
+            const vpce = new ec2.GatewayVpcEndpoint(this, 'S3Vpce', {
+                service: ec2.GatewayVpcEndpointAwsService.S3,
+                vpc,
+            });
+
+        }
+
+
 
         const subnets = vpc.privateSubnets;
-        const securityGroup = vpc.vpcDefaultSecurityGroup;
 
         /*
          * END
-         * CREATE SDAS VPC
+         * CREATE OR USE EXISTING VPC
          */
 
         const cfWafWebAcl = new SsmParameterReaderConstruct(
@@ -656,9 +702,9 @@ export class AppStack extends cdk.Stack {
                 role: testConnectionRole,
                 vpc: vpc,
                 securityGroups: [rdsSecurityGroup],
-                vpcSubnets: {
-                    subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
-                },
+                vpcSubnets: subnet
+                    ? { subnets: [subnet] }
+                    : { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
                 allowPublicSubnet: true,
                 runtime: cdk.aws_lambda.Runtime.PYTHON_3_9,
                 handler: 'lambda_handler',
@@ -713,9 +759,9 @@ export class AppStack extends cdk.Stack {
                 role: backgroundGetSourceTablesRole,
                 vpc: vpc,
                 securityGroups: [rdsSecurityGroup],
-                vpcSubnets: {
-                    subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
-                },
+                vpcSubnets: subnet
+                    ? { subnets: [subnet] }
+                    : { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
                 allowPublicSubnet: true,
                 runtime: cdk.aws_lambda.Runtime.PYTHON_3_9,
                 handler: 'lambda_handler',
@@ -1084,10 +1130,14 @@ export class AppStack extends cdk.Stack {
                 entry: '../step-functions/aws-glue-job',
                 timeout: cdk.Duration.minutes(5),
                 environment: {
-                    AVAILABILITY_ZONE: subnets[0].availabilityZone,
-                    SUBNET_ID: subnets[0].subnetId,
+                    AVAILABILITY_ZONE: subnet
+                        ? "us-east-1a"
+                        : subnets[0].availabilityZone,
+                    SUBNET_ID: subnet
+                        ? "us-east-1a"
+                        : subnets[0].availabilityZone,
                     RDS_SECURITY_GROUP: rdsSecurityGroup.securityGroupId,
-                    VPC_DEFAULT_SECURITY_GROUP: securityGroup,
+                    VPC_DEFAULT_SECURITY_GROUP: securityGroup.securityGroupId,
                     REGION: awsRegion,
                 },
             }
