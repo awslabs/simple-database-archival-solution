@@ -22,6 +22,7 @@ import { TopBarNavigation } from './components/TopBarNavigation';
 import Home from './pages/Home';
 import AddArchive from './pages/AddArchive';
 import ViewArchive from './pages/ViewArchive';
+import '@aws-amplify/ui-react/styles.css';
 
 const theme = {
 	tokens: {
