@@ -25,7 +25,7 @@ import { SideBarNavigation } from '../../components/SideBarNavigation';
 import { PageHeader } from '../../components/common-components';
 import { FormContent } from './FormContent';
 
-function AddArchive() {
+function AddStructuredArchive() {
 	const [flashbarItems, setFlashbarItems] = useState([]);
 	const [enableFlashbar, setEnableFlashbar] = useState(false);
 
@@ -61,4 +61,4 @@ function AddArchive() {
 	);
 }
 
-export default AddArchive;
+export default AddStructuredArchive;

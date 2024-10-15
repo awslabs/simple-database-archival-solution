@@ -33,6 +33,19 @@ body {
 	font-family: awsui.$font-family-base;
 }
 
+.custom-main-header {
+	display: block;
+	position: sticky;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 1000;
+	margin: 0;
+	background-color: #0f1b2a;
+	font-family: awsui.$font-family-base;
+	border-bottom: solid 1px #414d5c;
+  }
+
 ul.menu-list {
 	display: flex;
 	align-items: center;

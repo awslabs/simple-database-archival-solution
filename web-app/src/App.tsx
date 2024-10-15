@@ -23,6 +23,7 @@ import Home from './pages/Home';
 import AddArchive from './pages/AddArchive';
 import ViewArchive from './pages/ViewArchive';
 import '@aws-amplify/ui-react/styles.css';
+import AddStructuredArchive from './pages/AddStructuredArchive';
 
 const theme = {
 	tokens: {
@@ -49,6 +50,10 @@ function App() {
 			<Switch>
 				<Route path="/" exact component={Home} />
 				<Route path="/add-archive" component={AddArchive} />
+				<Route
+					path="/add-structured-archive"
+					component={AddStructuredArchive}
+				/>
 				<Route
 					path="/view/:id/view/:archive_name/view/:time_submitted/view/:status/view/:mode"
 					component={ViewArchive}
