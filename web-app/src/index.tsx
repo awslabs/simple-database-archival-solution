@@ -13,6 +13,7 @@
  * permissions and limitations under the License.
  */
 
+import './index.css';
 import { Amplify, Auth } from 'aws-amplify';
 import React from 'react';
 import ReactDOM from 'react-dom';
