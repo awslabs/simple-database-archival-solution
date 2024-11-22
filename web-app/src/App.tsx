@@ -1,11 +1,11 @@
 /**
- * Copyright 2023 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+ * Copyright 2024 Amazon.com, Inc. and its affiliates. All Rights Reserved.
  *
  * Licensed under the Amazon Software License (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- *   http://aws.amazon.com/asl/
+ *   https://aws.amazon.com/asl/
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -13,16 +13,15 @@
  * permissions and limitations under the License.
  */
 
+import '@aws-amplify/ui-react/styles.css';
 import React from 'react';
 import { withAuthenticator } from '@aws-amplify/ui-react';
-// import { applyTheme } from '@cloudscape-design/components/theming';
+import { applyTheme } from '@cloudscape-design/components/theming';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
-// import CssBaseline from '@material-ui/core/CssBaseline';
 import { TopBarNavigation } from './components/TopBarNavigation';
 import Home from './pages/Home';
 import AddArchive from './pages/AddArchive';
 import ViewArchive from './pages/ViewArchive';
-// import '@aws-amplify/ui-react/styles.css';
 
 const theme = {
 	tokens: {
@@ -39,12 +38,11 @@ const theme = {
 	},
 };
 
-// applyTheme({ theme });
+applyTheme({ theme });
 
 function App() {
 	return (
 		<BrowserRouter>
-			{/*<CssBaseline />*/}
 			<TopBarNavigation />
 			<Switch>
 				<Route path="/" exact component={Home} />
