@@ -14,7 +14,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import TopNav from '@cloudscape-design/components/top-navigation';
+import TopNavigation from '@cloudscape-design/components/top-navigation';
 import { applyMode, Mode } from '@cloudscape-design/global-styles';
 import { Auth } from 'aws-amplify';
 
@@ -78,7 +78,7 @@ export function TopBarNavigation() {
 	}, []);
 
 	return (
-		<TopNav
+		<TopNavigation
 			i18nStrings={i18nStrings}
 			identity={{
 				href: '/',
