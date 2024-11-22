@@ -11,8 +11,3 @@ code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-
-nav.awsui_navigation_hyvsj_zt14d_609:not(#\9) {
-    box-shadow: none !important;
-    border-right: var(--border-divider-section-width-4wm2it, 2px) solid var(--color-border-divider-default-7s2wjw, #e9ebed);
-}

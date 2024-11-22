@@ -15,14 +15,14 @@
 
 import React from 'react';
 import { withAuthenticator } from '@aws-amplify/ui-react';
-import { applyTheme } from '@cloudscape-design/components/theming';
+// import { applyTheme } from '@cloudscape-design/components/theming';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
-import CssBaseline from '@material-ui/core/CssBaseline';
+// import CssBaseline from '@material-ui/core/CssBaseline';
 import { TopBarNavigation } from './components/TopBarNavigation';
 import Home from './pages/Home';
 import AddArchive from './pages/AddArchive';
 import ViewArchive from './pages/ViewArchive';
-import '@aws-amplify/ui-react/styles.css';
+// import '@aws-amplify/ui-react/styles.css';
 
 const theme = {
 	tokens: {
@@ -39,12 +39,12 @@ const theme = {
 	},
 };
 
-applyTheme({ theme });
+// applyTheme({ theme });
 
 function App() {
 	return (
 		<BrowserRouter>
-			<CssBaseline />
+			{/*<CssBaseline />*/}
 			<TopBarNavigation />
 			<Switch>
 				<Route path="/" exact component={Home} />

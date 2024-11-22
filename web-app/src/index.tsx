@@ -19,6 +19,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import '@cloudscape-design/global-styles/index.css';
 
 let basePath: string;
 if (process.env.NODE_ENV === 'production') {
