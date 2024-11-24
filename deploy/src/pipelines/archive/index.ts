@@ -346,7 +346,7 @@ export class Archive extends Construct {
 			this,
 			'CreateStateMachineParam',
 			{
-				parameterName: '/job/step-functions-state-machine1',
+				parameterName: '/job/step-functions-state-machine',
 				stringValue: `arn:aws:states:${awsRegion}:${awsAccountId}:stateMachine:${stateMachine.stateMachineName}`,
 				description: 'Name for state machine',
 				type: ssm.ParameterType.STRING,

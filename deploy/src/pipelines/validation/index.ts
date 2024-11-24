@@ -17,15 +17,12 @@ import { Construct } from 'constructs';
 import * as lambdaPython from '@aws-cdk/aws-lambda-python-alpha';
 import * as cdk from 'aws-cdk-lib';
 import * as sqs from 'aws-cdk-lib/aws-sqs';
+import * as ssm from 'aws-cdk-lib/aws-ssm';
 import { Effect, Policy, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { Duration, RemovalPolicy } from 'aws-cdk-lib';
-import * as ssm from 'aws-cdk-lib/aws-ssm';
-import { Shared } from '../../shared';
-import { Apis } from '../../apis';
-import { Iam } from '../../iam';
-import { Buckets } from '../../buckets';
-import { Tables } from '../../tables';
 import { SqsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
+import { Iam } from '../../iam';
+import { Tables } from '../../tables';
 
 export class Validation extends Construct {
 	constructor(
@@ -33,10 +30,7 @@ export class Validation extends Construct {
 		id: string,
 		awsAccountId: string,
 		awsRegion: string,
-		shared: Shared,
-		apis: Apis,
 		iam: Iam,
-		buckets: Buckets,
 		tables: Tables
 	) {
 		super(scope, id);
@@ -78,7 +72,7 @@ export class Validation extends Construct {
 		});
 
 		new ssm.StringParameter(this, 'SqsFifoValidationParam', {
-			parameterName: '/sqs/validation',
+			parameterName: '/sqs/validation1',
 			stringValue: sqsFifoValidation.queueUrl,
 			description: 'Queue for tracking validation completion status',
 			type: ssm.ParameterType.STRING,
@@ -392,7 +386,7 @@ export class Validation extends Construct {
 			this,
 			'CreateValidationStateMachineParam',
 			{
-				parameterName: '/job/sf-validation-state-machine',
+				parameterName: '/job/sf-validation-state-machine1',
 				stringValue: `arn:aws:states:${awsRegion}:${awsAccountId}:stateMachine:${validationStateMachine.stateMachineName}`,
 				description: 'Name for state machine',
 				type: ssm.ParameterType.STRING,

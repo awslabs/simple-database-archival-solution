@@ -19,8 +19,10 @@ import { Shared } from '../shared';
 import { Apis } from '../apis';
 import { Iam } from '../iam';
 import { Buckets } from '../buckets';
+import { Validation } from './validation';
+import { Tables } from '../tables';
 
-export class StepFunctions extends Construct {
+export class Pipelines extends Construct {
 	constructor(
 		scope: Construct,
 		id: string,
@@ -29,7 +31,8 @@ export class StepFunctions extends Construct {
 		shared: Shared,
 		apis: Apis,
 		iam: Iam,
-		buckets: Buckets
+		buckets: Buckets,
+		tables: Tables
 	) {
 		super(scope, id);
 
@@ -42,6 +45,15 @@ export class StepFunctions extends Construct {
 			apis,
 			iam,
 			buckets
+		);
+
+		new Validation(
+			this,
+			'Validation',
+			awsAccountId,
+			awsRegion,
+			iam,
+			tables
 		);
 	}
 }

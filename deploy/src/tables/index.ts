@@ -16,8 +16,9 @@
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { DynamoDBTableConstruct } from '../constructs/dynamodb-table-construct';
+import * as ssm from 'aws-cdk-lib/aws-ssm';
 
-export class Databases extends Construct {
+export class Tables extends Construct {
 	public readonly archivesTable: DynamoDBTableConstruct;
 	public readonly queryLookupTable: DynamoDBTableConstruct;
 	public readonly fetchSchemaTable: DynamoDBTableConstruct;
@@ -60,5 +61,23 @@ export class Databases extends Construct {
 				timeToLiveAttribute: 'ttl',
 			}
 		);
+
+		new ssm.StringParameter(this, 'DynamoDBTableParam', {
+			parameterName: '/archive/dynamodb-table',
+			stringValue: this.archivesTable.table.tableName,
+			description: 'Table name for archives.',
+			type: ssm.ParameterType.STRING,
+			tier: ssm.ParameterTier.STANDARD,
+			allowedPattern: '.*',
+		});
+
+		new ssm.StringParameter(this, 'QueryDynamoDBTableParam', {
+			parameterName: '/archive/query-lookup-dynamodb-table',
+			stringValue: this.queryLookupTable.table.tableName,
+			description: 'Table name for validation query IDs.',
+			type: ssm.ParameterType.STRING,
+			tier: ssm.ParameterTier.STANDARD,
+			allowedPattern: '.*',
+		});
 	}
 }
