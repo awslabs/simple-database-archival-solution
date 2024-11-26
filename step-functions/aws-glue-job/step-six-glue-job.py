@@ -102,7 +102,7 @@ def lambda_handler(event, context):
         elif event["database_engine"] == "postgresql":
             client.create_job(
                 Name=f'{event["archive_id"]}-{event["database"]}-{event["table"]}',
-                Role=aws_glue_role["Parameter"]["Value"],
+                Role=AWS_GLUE_ROLE,
                 Command={
                     'Name': 'glueetl',
                     'ScriptLocation': f's3://{ARTIFACT_BUCKET_NAME}/scripts/postgresql-1-0-0.py',
