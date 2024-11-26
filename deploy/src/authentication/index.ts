@@ -1,11 +1,11 @@
 /**
- * Copyright 2023 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+ * Copyright 2024 Amazon.com, Inc. and its affiliates. All Rights Reserved.
  *
  * Licensed under the Amazon Software License (the "License").
  * You may not use this file except in compliance with the License.
  * A copy of the License is located at
  *
- *   http://aws.amazon.com/asl/
+ *   https://aws.amazon.com/asl/
  *
  * or in the "license" file accompanying this file. This file is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -21,10 +21,7 @@ export interface CognitoWebNativeConstructProps extends cdk.StackProps {}
 
 const defaultProps: Partial<CognitoWebNativeConstructProps> = {};
 
-/**
- * Deploys Cognito with an Authenticated & UnAuthenticated Role with a Web and Native client
- */
-export class CognitoWebNativeConstruct extends Construct {
+export class Authentication extends Construct {
 	public userPool: cdk.aws_cognito.UserPool;
 	public webClientUserPool: cdk.aws_cognito.UserPoolClient;
 	public nativeClientUserPool: cdk.aws_cognito.UserPoolClient;
@@ -66,12 +63,6 @@ export class CognitoWebNativeConstruct extends Construct {
 				requireUppercase: true,
 				requireSymbols: true,
 				requireLowercase: true,
-			},
-			standardAttributes: {
-				preferredUsername: {
-					required: true,
-					mutable: false,
-				},
 			},
 			removalPolicy: cdk.RemovalPolicy.DESTROY,
 		});
@@ -167,6 +158,58 @@ export class CognitoWebNativeConstruct extends Construct {
 				},
 			}
 		);
+
+		const adminGroup = new cdk.aws_cognito.CfnUserPoolGroup(
+			this,
+			'SdasAdminsGroup',
+			{
+				groupName: 'sdas-admins',
+				userPoolId: userPool.userPoolId,
+				description: 'SDAS Administrators',
+			}
+		);
+
+		// Admin User
+		const adminUser = new cdk.aws_cognito.CfnUserPoolUser(
+			this,
+			'SdasAdminUser',
+			{
+				userPoolId: userPool.userPoolId,
+				username: 'admin',
+				userAttributes: [
+					{
+						name: 'email',
+						value: this.node.tryGetContext('admin_email'),
+					},
+					{
+						name: 'given_name',
+						value: 'SDAS',
+					},
+					{
+						name: 'family_name',
+						value: 'Admin',
+					},
+					{
+						name: 'email_verified',
+						value: 'true',
+					},
+				],
+				desiredDeliveryMediums: ['EMAIL'],
+			}
+		);
+
+		const adminGroupAttachment =
+			new cdk.aws_cognito.CfnUserPoolUserToGroupAttachment(
+				this,
+				'AdminGroupAttachment',
+				{
+					username: adminUser.username!,
+					groupName: adminGroup.groupName!,
+					userPoolId: userPool.userPoolId,
+				}
+			);
+
+		adminGroupAttachment.node.addDependency(adminGroup, adminUser);
 
 		// Assign Cfn Outputs
 		new cdk.CfnOutput(this, 'UserPoolId', {

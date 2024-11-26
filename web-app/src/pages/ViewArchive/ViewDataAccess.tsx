@@ -38,8 +38,8 @@ import { paginationLabels } from '../../components/labels';
 import { TableHeader } from '../../components/common-components';
 import { originsSelectionLabels } from '../../components/labels';
 import { VALIDATION_TABLE_EXECUTION_COLUMN_DEFINITION } from './details-config';
-import '../../styles/base.scss';
-import '../../styles/top-navigation.scss';
+// import '../../styles/base.scss';
+// import '../../styles/top-navigation.scss';
 import CodeEditor from '@awsui/components-react/code-editor';
 
 function EmptyState({

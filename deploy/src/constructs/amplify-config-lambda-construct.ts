@@ -130,17 +130,17 @@ export class AmplifyConfigLambdaConstruct extends Construct {
 			authorizer: authorizer,
 		});
 
-		// add nag suppressions for the amplify config api route
-		NagSuppressions.addResourceSuppressionsByPath(
-			stack,
-			`${stack.stackName}/Api/${props.api.node.id}/GET--api--amplify-config/Resource`,
-			[
-				{
-					id: 'AwsSolutions-APIG4',
-					reason: 'Amplify config is a unprotected API returning public data',
-				},
-			]
-		);
+		// // add nag suppressions for the amplify config api route
+		// NagSuppressions.addResourceSuppressionsByPath(
+		// 	stack,
+		// 	`${stack.stackName}/Api/${props.api.node.id}/GET--api--amplify-config/Resource`,
+		// 	[
+		// 		{
+		// 			id: 'AwsSolutions-APIG4',
+		// 			reason: 'Amplify config is a unprotected API returning public data',
+		// 		},
+		// 	]
+		// );
 	}
 
 	private getAuthorizerLambdaCode(): string {

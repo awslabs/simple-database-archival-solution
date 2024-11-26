@@ -1,11 +1,11 @@
 """
-Copyright 2023 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+Copyright 2024 Amazon.com, Inc. and its affiliates. All Rights Reserved.
 
 Licensed under the Amazon Software License (the "License").
 You may not use this file except in compliance with the License.
 A copy of the License is located at
 
-  http://aws.amazon.com/asl/
+  https://aws.amazon.com/asl/
 
 or in the "license" file accompanying this file. This file is distributed
 on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -18,35 +18,28 @@ import os
 from botocore.config import Config
 
 REGION = os.environ["REGION"]
+ARTIFACT_BUCKET_NAME = os.environ["ARTIFACT_BUCKET_NAME"]
+TEMP_GLUE_BUCKET_NAME = os.environ["TEMP_GLUE_BUCKET_NAME"]
+AWS_GLUE_ROLE = os.environ["AWS_GLUE_ROLE"]
 
 client = boto3.client('glue', region_name=REGION, config=Config(
     connect_timeout=5, read_timeout=60, retries={'max_attempts': 20}))
 dynamodb = boto3.resource('dynamodb', region_name=REGION)
-ssm = boto3.client('ssm')
 
 
 def lambda_handler(event, context):
-
-    # Get SSM Parameter for DynamoDB Table name
-    bucket_parm = ssm.get_parameter(
-        Name='/glue/s3-bucket-glue-assets', WithDecryption=True)
-    temp_glue_bucket_parm = ssm.get_parameter(
-        Name='/glue/temp-dir', WithDecryption=True)
-    aws_glue_role = ssm.get_parameter(
-        Name='/glue/glue-role', WithDecryption=True)
-
     try:
         if event["database_engine"] == "mysql":
             client.create_job(
                 Name=f'{event["archive_id"]}-{event["database"]}-{event["table"]}',
-                Role=aws_glue_role["Parameter"]["Value"],
+                Role=AWS_GLUE_ROLE,
                 Command={
                     'Name': 'glueetl',
-                    'ScriptLocation': f's3://{bucket_parm["Parameter"]["Value"]}/scripts/mysql-1-0-0.py',
+                    'ScriptLocation': f's3://{ARTIFACT_BUCKET_NAME}/scripts/mysql-1-0-0.py',
                     'PythonVersion': '3'
                 },
                 DefaultArguments={
-                    '--TempDir': f's3://{temp_glue_bucket_parm["Parameter"]["Value"]}/temp/',
+                    '--TempDir': f's3://{TEMP_GLUE_BUCKET_NAME}/temp/',
                     '--job-bookmark-option': 'job-bookmark-disable'
                 },
                 MaxRetries=0,
@@ -60,16 +53,16 @@ def lambda_handler(event, context):
                 }
             )
         elif event["database_engine"] == "mssql":
-            response = client.create_job(
+            client.create_job(
                 Name=f'{event["archive_id"]}-{event["database"]}-{event["table"]}',
-                Role=aws_glue_role["Parameter"]["Value"],
+                Role=AWS_GLUE_ROLE,
                 Command={
                     'Name': 'glueetl',
-                    'ScriptLocation': f's3://{bucket_parm["Parameter"]["Value"]}/scripts/mssql-1-0-0.py',
+                    'ScriptLocation': f's3://{ARTIFACT_BUCKET_NAME}/scripts/mssql-1-0-0.py',
                     'PythonVersion': '3'
                 },
                 DefaultArguments={
-                    '--TempDir': f's3://{temp_glue_bucket_parm["Parameter"]["Value"]}/temp/',
+                    '--TempDir': f's3://{TEMP_GLUE_BUCKET_NAME}/temp/',
                     '--job-bookmark-option': 'job-bookmark-disable',
                     '--disable-proxy-v2': 'true'
                 },
@@ -86,14 +79,14 @@ def lambda_handler(event, context):
         elif event["database_engine"] == "oracle":
             client.create_job(
                 Name=f'{event["archive_id"]}-{event["database"]}-{event["table"]}',
-                Role=aws_glue_role["Parameter"]["Value"],
+                Role=AWS_GLUE_ROLE,
                 Command={
                     'Name': 'glueetl',
-                    'ScriptLocation': f's3://{bucket_parm["Parameter"]["Value"]}/scripts/oracle-1-0-4.py',
+                    'ScriptLocation': f's3://{ARTIFACT_BUCKET_NAME}/scripts/oracle-1-0-4.py',
                     'PythonVersion': '3'
                 },
                 DefaultArguments={
-                    '--TempDir': f's3://{temp_glue_bucket_parm["Parameter"]["Value"]}/temp/',
+                    '--TempDir': f's3://{TEMP_GLUE_BUCKET_NAME}/temp/',
                     '--job-bookmark-option': 'job-bookmark-disable'
                 },
                 MaxRetries=0,
@@ -107,16 +100,16 @@ def lambda_handler(event, context):
                 }
             )
         elif event["database_engine"] == "postgresql":
-            response = client.create_job(
+            client.create_job(
                 Name=f'{event["archive_id"]}-{event["database"]}-{event["table"]}',
-                Role=aws_glue_role["Parameter"]["Value"],
+                Role=AWS_GLUE_ROLE,
                 Command={
                     'Name': 'glueetl',
-                    'ScriptLocation': f's3://{bucket_parm["Parameter"]["Value"]}/scripts/postgresql-1-0-0.py',
+                    'ScriptLocation': f's3://{ARTIFACT_BUCKET_NAME}/scripts/postgresql-1-0-0.py',
                     'PythonVersion': '3'
                 },
                 DefaultArguments={
-                    '--TempDir': f's3://{temp_glue_bucket_parm["Parameter"]["Value"]}/temp/',
+                    '--TempDir': f's3://{TEMP_GLUE_BUCKET_NAME}/temp/',
                     '--job-bookmark-option': 'job-bookmark-disable',
                     '--disable-proxy-v2': 'true'
                 },
@@ -135,12 +128,5 @@ def lambda_handler(event, context):
         print(ex)
         print('error')
         raise
-
-    # table.update_item(
-    #     Key={'id': event["Item"]["id"]},
-    #     UpdateExpression="SET archive_status= :s",
-    #     ExpressionAttributeValues={':s': 'Failed'},
-    #     ReturnValues="UPDATED_NEW"
-    # )
 
     return {"Payload": event}

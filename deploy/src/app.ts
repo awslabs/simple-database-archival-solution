@@ -22,7 +22,6 @@ import { suppressCdkNagRules } from './cdk-nag-suppressions';
 
 const app = new cdk.App();
 
-const stackName = 'sdas';
 const account =
 	app.node.tryGetContext('account') ||
 	process.env.CDK_DEPLOY_ACCOUNT ||
@@ -33,7 +32,7 @@ const region =
 	process.env.CDK_DEFAULT_REGION;
 
 // Deploy Waf for CloudFront in us-east-1
-const cfWafStackName = stackName + '-waf';
+const cfWafStackName = 'WAFStack';
 
 const cfWafStack = new CfWafStack(app, cfWafStackName, {
 	env: {
@@ -43,20 +42,21 @@ const cfWafStack = new CfWafStack(app, cfWafStackName, {
 	stackName: cfWafStackName,
 });
 
-// Deploy App Stack
-const appStack = new AppStack(app, stackName, {
+// Deploy Main Stack
+const mainStackName = 'MainStack';
+const appStack = new AppStack(app, mainStackName, {
 	env: {
 		account: account,
 		region: region,
 	},
-	stackName: stackName,
+	stackName: mainStackName,
 	ssmWafArnParameterName: cfWafStack.ssmWafArnParameterName,
 	ssmWafArnParameterRegion: cfWafStack.region,
 });
 
 appStack.addDependency(cfWafStack);
 
-// Add Aws Solutions Checks and suppress rules
+// Add AWS Solutions Checks and suppress rules
 cdk.Aspects.of(app).add(new AwsSolutionsChecks({ logIgnores: true }));
 suppressCdkNagRules(cfWafStack);
 suppressCdkNagRules(appStack);

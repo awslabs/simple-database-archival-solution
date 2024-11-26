@@ -13,11 +13,13 @@
  * permissions and limitations under the License.
  */
 
+import './index.css';
 import { Amplify, Auth } from 'aws-amplify';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import '@cloudscape-design/global-styles/index.css';
 
 let basePath: string;
 if (process.env.NODE_ENV === 'production') {

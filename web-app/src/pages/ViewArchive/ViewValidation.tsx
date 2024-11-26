@@ -24,8 +24,8 @@ import {
 } from '@cloudscape-design/components';
 import { useParams } from 'react-router-dom';
 import { VALIDATION_TABLE_EXECUTION_COLUMN_DEFINITION } from './details-config';
-import '../../styles/base.scss';
-import '../../styles/top-navigation.scss';
+// import '../../styles/base.scss';
+// import '../../styles/top-navigation.scss';
 import { paginationLabels } from '../../components/labels';
 import { TableHeader } from '../../components/common-components';
 import Pagination from '@cloudscape-design/components/pagination';
