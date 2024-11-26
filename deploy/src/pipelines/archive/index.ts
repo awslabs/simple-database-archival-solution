@@ -129,6 +129,9 @@ export class Archive extends Construct {
 				timeout: cdk.Duration.minutes(5),
 				environment: {
 					REGION: awsRegion,
+					ARTIFACT_BUCKET_NAME: buckets.glueAssetBucket.bucketName,
+					TEMP_GLUE_BUCKET_NAME: buckets.glueTempBucket.bucketName,
+					AWS_GLUE_ROLE: iam.awsGlueRole.roleName,
 				},
 			}
 		);

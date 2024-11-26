@@ -18,10 +18,11 @@ import * as iam from 'aws-cdk-lib/aws-iam';
 import * as ssm from 'aws-cdk-lib/aws-ssm';
 
 import { DynamoDBTableConstruct } from '../constructs/dynamodb-table-construct';
-import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { PolicyStatement, Role } from 'aws-cdk-lib/aws-iam';
 import { S3BucketConstruct } from '../constructs/s3-bucket-construct';
 
 export class Iam extends Construct {
+	public readonly awsGlueRole: Role;
 	public readonly dynamoDbReadOnlyPolicy: PolicyStatement;
 	public readonly dynamoDbWritePolicy: PolicyStatement;
 	public readonly ssmGetParameterPolicy: PolicyStatement;
@@ -53,7 +54,7 @@ export class Iam extends Construct {
 	) {
 		super(scope, id);
 
-		const awsGlueRole = new iam.Role(this, 'AwsGlueRole', {
+		this.awsGlueRole = new Role(this, 'AwsGlueRole', {
 			assumedBy: new iam.ServicePrincipal('glue.amazonaws.com'),
 			description: 'IAM role for AWS Glue',
 			managedPolicies: [
@@ -68,7 +69,7 @@ export class Iam extends Construct {
 
 		new ssm.StringParameter(this, 'AwsGlueRoleParameter', {
 			parameterName: '/glue/glue-role',
-			stringValue: awsGlueRole.roleName,
+			stringValue: this.awsGlueRole.roleName,
 			description: 'AWS Glue Role Name',
 			type: ssm.ParameterType.STRING,
 			tier: ssm.ParameterTier.STANDARD,
