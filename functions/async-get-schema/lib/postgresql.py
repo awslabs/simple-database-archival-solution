@@ -29,7 +29,6 @@ else:
 
 
 def convert_schema(type):
-
     if "bigint" == type:
         return "bigint"
     elif "bigserial" == type:
@@ -109,7 +108,7 @@ def convert_schema(type):
     elif "xml" in type:
         return "string"
     elif "ARRAY" in type:
-        return "array"
+        return "array<string>"
     elif "USER-DEFINED" in type:
         return "string"
     else:
@@ -174,7 +173,6 @@ class Connection:
                         table[0].split('.', 1)[1])
                     table_cursor.execute(execute_sql_string)
 
-                    
                     rows = table_cursor.fetchall()
                     if len(rows) != 0:
                         row_list = []

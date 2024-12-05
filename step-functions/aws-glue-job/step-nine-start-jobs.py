@@ -30,8 +30,13 @@ dynamodb = boto3.resource("dynamodb", region_name=REGION)
 ssm = boto3.client("ssm")
 
 
-def lambda_handler(event, context):
+def adjust_data_type(data_type):
+    if data_type.lower() == 'array<string>':
+        return 'array'
+    return data_type
 
+
+def lambda_handler(event, context):
     bucketParameter = ssm.get_parameter(
         Name="/job/s3-bucket-table-data", WithDecryption=True
     )
@@ -49,8 +54,9 @@ def lambda_handler(event, context):
         mappings = []
 
         for schema in event["table_details"]:
+            value = adjust_data_type(schema["value"])
             mappings.append(
-                [schema["key"], schema["value"], schema["key"], schema["value"]]
+                [schema["key"], value, schema["key"], value]
             )
 
         if event["database_engine"] == "mysql":
@@ -170,7 +176,7 @@ def lambda_handler(event, context):
                     }
                 },
             )
-            
+
         elif event["database_engine"] == "postgresql":
             response = client.start_job_run(
                 JobName=f'{event["archive_id"]}-{event["database"]}-{event["table"]}',
