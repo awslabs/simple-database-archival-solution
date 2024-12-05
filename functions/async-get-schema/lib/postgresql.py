@@ -1,11 +1,11 @@
 """ 
-Copyright 2023 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+Copyright 2024 Amazon.com, Inc. and its affiliates. All Rights Reserved.
 
 Licensed under the Amazon Software License (the "License").
 You may not use this file except in compliance with the License.
 A copy of the License is located at
 
-  http://aws.amazon.com/asl/
+  https://aws.amazon.com/asl/
 
 or in the "license" file accompanying this file. This file is distributed
 on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
@@ -13,7 +13,6 @@ express or implied. See the License for the specific language governing
 permissions and limitations under the License.
 """
 
-from contextlib import nullcontext
 import psycopg2
 import traceback
 import os
@@ -28,91 +27,57 @@ else:
     logging.basicConfig(level=LOG_LEVEL)
 
 
-def convert_schema(type):
-    if "bigint" == type:
-        return "bigint"
-    elif "bigserial" == type:
-        return "int"
-    elif "bit" in type:
-        return "string"
-    elif "boolean" == type:
-        return "boolean"
-    elif "box" in type:
-        return "string"
-    elif "bytea" in type:
-        return "binary"
-    elif "character" in type:
-        return "string"
-    elif "character" in type:
-        return "string"
-    elif "cidr" in type:
-        return "string"
-    elif "circle" in type:
-        return "string"
-    elif "date" in type:
-        return "date"
-    elif "double precision" in type:
-        return "decimal(38,6)"
-    elif "inet" in type:
-        return "string"
-    elif "integer" == type:
-        return "int"
-    elif "interval" == type:
-        return "string"
-    elif "json" in type:
-        return "string"
-    elif "jsonb" in type:
-        return "string"
-    elif "lseg" in type:
-        return "string"
-    elif "macaddr" in type:
-        return "string"
-    elif "macaddr8" in type:
-        return "string"
-    elif "money" in type:
-        return "decimal(19,4)"
-    elif "numeric" in type:
-        return "decimal(38,18)"
-    elif "path" in type:
-        return "string"
-    elif "pg_lsn" in type:
-        return "string"
-    elif "pg_snapshot" in type:
-        return "string"
-    elif "point" in type:
-        return "string"
-    elif "polygon" in type:
-        return "string"
-    elif "real" in type:
-        return "decimal(19,4)"
-    elif "smallint" in type:
-        return "smallint"
-    elif "smallserial" in type:
-        return "int"
-    elif "serial" in type:
-        return "int"
-    elif "text" in type:
-        return "string"
-    elif "timestamp" in type:
-        return "timestamp"
-    elif "time" in type:
-        return "string"
-    elif "tsquery" in type:
-        return "string"
-    elif "tsvector" in type:
-        return "string"
-    elif "txid_snapshot" in type:
-        return "string"
-    elif "uuid" == type:
-        return "string"
-    elif "xml" in type:
-        return "string"
-    elif "ARRAY" in type:
-        return "array<string>"
-    elif "USER-DEFINED" in type:
-        return "string"
-    else:
-        return "string"
+def convert_schema(data_type, udt_name=None):
+    # Check if the type is an array
+    if data_type == "ARRAY":
+        base_type = convert_schema(udt_name)
+        return f"array<{base_type}>"
+
+    type_mapping = {
+        "bigint": "bigint",
+        "bigserial": "int",
+        "bit": "string",
+        "boolean": "boolean",
+        "box": "string",
+        "bytea": "binary",
+        "character": "string",
+        "cidr": "string",
+        "circle": "string",
+        "date": "date",
+        "double precision": "decimal(38,6)",
+        "inet": "string",
+        "integer": "int",
+        "interval": "string",
+        "json": "string",
+        "jsonb": "string",
+        "lseg": "string",
+        "macaddr": "string",
+        "macaddr8": "string",
+        "money": "decimal(19,4)",
+        "numeric": "decimal(38,18)",
+        "path": "string",
+        "pg_lsn": "string",
+        "pg_snapshot": "string",
+        "point": "string",
+        "polygon": "string",
+        "real": "decimal(19,4)",
+        "smallint": "smallint",
+        "smallserial": "int",
+        "serial": "int",
+        "text": "string",
+        "timestamp": "timestamp",
+        "timestamp without time zone": "timestamp",
+        "time": "string",
+        "tsquery": "string",
+        "tsvector": "string",
+        "txid_snapshot": "string",
+        "uuid": "string",
+        "xml": "string",
+        "ARRAY": "array<string>",
+        "USER-DEFINED": "string"
+    }
+
+    return type_mapping.get(data_type, "string")
 
 
 class Connection:
@@ -158,15 +123,17 @@ class Connection:
                     password=self.password,
                     dbname=self.dbname)
                 try:
-
                     sql_string = """
                         SELECT 
-                            column_name, data_type, is_nullable
+                            column_name, 
+                            data_type, 
+                            udt_name,  -- Base type for arrays
+                            is_nullable
                         FROM 
                             information_schema.columns
                         WHERE 
                             table_name = '{0}';
-                        """
+                    """
 
                     table_cursor = table_connection.cursor()
                     execute_sql_string = sql_string.format(
@@ -177,14 +144,14 @@ class Connection:
                     if len(rows) != 0:
                         row_list = []
                         for row in rows:
-                            row_type = convert_schema(row[1])
+                            row_type = convert_schema(row[1], row[2])
                             row_list.append(
                                 {
                                     "key": row[0],
                                     "value": row_type,
                                     "origin_type": row[1],
                                     "existing": True,
-                                    "is_nullable": row[2]
+                                    "is_nullable": row[3]
                                 }
                             )
                         if len(rows) != 0:
