@@ -72,25 +72,6 @@ def update_validation_state(archive_id, query_execution_id, table_name, validati
     )
     print(response)
 
-    # validation_completed_increment = dynamodb_response["Item"][
-    #     "counters"]["validation"]["validation_completed"] + 1
-    # validation_count = dynamodb_response["Item"]["counters"]["validation"]["validation_count"]
-
-    # table.update_item(
-    #     Key={'id': archive_id},
-    #     UpdateExpression="SET counters.validation.validation_completed = :s",
-    #     ExpressionAttributeValues={':s': validation_completed_increment},
-    #     ReturnValues="UPDATED_NEW"
-    # )
-
-    # if (validation_completed_increment == validation_count):
-    #     table.update_item(
-    #         Key={'id': archive_id},
-    #         UpdateExpression="SET archive_status= :s",
-    #         ExpressionAttributeValues={':s': 'Archived'},
-    #         ReturnValues="UPDATED_NEW"
-    #     )
-
 
 def get_archive(query_execution_id):
     parameter = ssm.get_parameter(

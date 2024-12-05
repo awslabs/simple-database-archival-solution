@@ -72,7 +72,7 @@ export class Validation extends Construct {
 		});
 
 		new ssm.StringParameter(this, 'SqsFifoValidationParam', {
-			parameterName: '/sqs/validation1',
+			parameterName: '/sqs/validation',
 			stringValue: sqsFifoValidation.queueUrl,
 			description: 'Queue for tracking validation completion status',
 			type: ssm.ParameterType.STRING,
@@ -386,7 +386,7 @@ export class Validation extends Construct {
 			this,
 			'CreateValidationStateMachineParam',
 			{
-				parameterName: '/job/sf-validation-state-machine1',
+				parameterName: '/job/sf-validation-state-machine',
 				stringValue: `arn:aws:states:${awsRegion}:${awsAccountId}:stateMachine:${validationStateMachine.stateMachineName}`,
 				description: 'Name for state machine',
 				type: ssm.ParameterType.STRING,
