@@ -1,46 +1,48 @@
 name: Build
 
 on:
-    push:
-        branches: [main]
-    pull_request:
-        branches: [main]
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
-    build:
-        runs-on: ubuntu-latest
-        steps:
-            - name: checkout repo
-              uses: actions/checkout@v2
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v2
 
-            - name: Setup Python Version
-              uses: actions/setup-python@v2
-              with:
-                  python-version: 3.9
+      - name: Setup Python Version
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
 
-            - name: setup node for the whole package
-              uses: actions/setup-node@v3
+      - name: setup node for the whole package
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
 
-            - name: npm install
-              run: npm install
+      - name: npm install
+        run: npm install
 
-            - name: Install Poetry Action
-              uses: snok/install-poetry@v1
-              with:
-                  version: 1.1.13
-                  virtualenvs-create: true
-                  virtualenvs-in-project: true
-                  virtualenvs-path: backend/.venv
-                  installer-parallel: true
+      - name: Install Poetry Action
+        uses: snok/install-poetry@v1
+        with:
+          version: 1.1.13
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+          virtualenvs-path: backend/.venv
+          installer-parallel: true
 
-            - name: Run yarn install
-              uses: Borales/actions-yarn@v4.2.0
-              with:
-                  dir: 'web-app'
-                  cmd: install
+      - name: Run yarn install
+        uses: Borales/actions-yarn@v4.2.0
+        with:
+          dir: 'web-app'
+          cmd: install
 
-            - name: web-app build
-              working-directory: web-app
-              env:
-                  CI: ''
-              run: npm run build
+      - name: web-app build
+        working-directory: web-app
+        env:
+          CI: ''
+        run: npm run build

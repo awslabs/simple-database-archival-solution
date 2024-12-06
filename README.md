@@ -36,7 +36,7 @@ As businesses accumulate more and more data over time, the need for effective da
 
 To build and deploy SDAS the following tools are required.
 
-1. NodeJs >= 18
+1. NodeJs >= 20
 2. Python3 >= 3.9
 3. Docker
 
