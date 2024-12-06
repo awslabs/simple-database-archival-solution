@@ -17,7 +17,7 @@ import '@aws-amplify/ui-react/styles.css';
 import React from 'react';
 import { withAuthenticator } from '@aws-amplify/ui-react';
 import { applyTheme } from '@cloudscape-design/components/theming';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { TopBarNavigation } from './components/TopBarNavigation';
 import Home from './pages/Home';
 import AddArchive from './pages/AddArchive';
@@ -44,14 +44,14 @@ function App() {
 	return (
 		<BrowserRouter>
 			<TopBarNavigation />
-			<Switch>
-				<Route path="/" exact component={Home} />
-				<Route path="/add-archive" component={AddArchive} />
+			<Routes>
+				<Route path="/" element={<Home />} />
+				<Route path="/add-archive" element={<AddArchive />} />
 				<Route
 					path="/view/:id/view/:archive_name/view/:time_submitted/view/:status/view/:mode"
-					component={ViewArchive}
+					element={<ViewArchive />}
 				/>
-			</Switch>
+			</Routes>
 		</BrowserRouter>
 	);
 }

@@ -14,7 +14,7 @@
  */
 
 import { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
 	Button,
 	Form,
@@ -34,18 +34,14 @@ function BaseFormContent({
 	getTables,
 	errorText = null,
 }) {
-	const history = useHistory();
+	const navigate = useNavigate();
 	const [creatingArchive, setCreatingArchive] = useState(false);
 
 	const createArchive = async (e) => {
 		setCreatingArchive(true);
-		const response = await API.post(
-			'api',
-			'api/archive/create',
-			databaseConnectionState
-		);
+		await API.post('api', 'api/archive/create', databaseConnectionState);
 		setCreatingArchive(false);
-		history.push('/');
+		navigate('/');
 	};
 
 	return (
