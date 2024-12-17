@@ -20,12 +20,9 @@ jobs:
 
             - name: setup node for the whole package
               uses: actions/setup-node@v3
-
-            - name: npm install
-              run: npm install
-
-            - name: Install correct types for react-router-dom
-              run: npm install @types/react-router-dom@5.1.7 --save-dev
+              with:
+                  node-version: '16'
+                  cache: 'yarn'
 
             - name: Install Poetry Action
               uses: snok/install-poetry@v1
@@ -36,14 +33,14 @@ jobs:
                   virtualenvs-path: backend/.venv
                   installer-parallel: true
 
-            - name: Run yarn install
-              uses: Borales/actions-yarn@v4.2.0
-              with:
-                  dir: 'web-app'
-                  cmd: install
+            - name: Install dependencies
+              working-directory: web-app
+              run: |
+                yarn install --frozen-lockfile
+                yarn add @types/react-router-dom@5.1.7 --dev
 
             - name: web-app build
               working-directory: web-app
               env:
                   CI: ''
-              run: npm run build
+              run: yarn build
