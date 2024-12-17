@@ -22,7 +22,6 @@ jobs:
               uses: actions/setup-node@v3
               with:
                   node-version: '16'
-                  cache: 'yarn'
 
             - name: Install Poetry Action
               uses: snok/install-poetry@v1
@@ -36,11 +35,11 @@ jobs:
             - name: Install dependencies
               working-directory: web-app
               run: |
-                yarn install --frozen-lockfile
-                yarn add @types/react-router-dom@5.1.7 --dev
+                npm install
+                npm install @types/react-router-dom@5.1.7 --save-dev
 
             - name: web-app build
               working-directory: web-app
               env:
                   CI: ''
-              run: yarn build
+              run: npm run build
