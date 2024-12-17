@@ -24,6 +24,9 @@ jobs:
             - name: npm install
               run: npm install
 
+            - name: Install correct types for react-router-dom
+              run: npm install @types/react-router-dom@5.1.7 --save-dev
+
             - name: Install Poetry Action
               uses: snok/install-poetry@v1
               with:
