@@ -17,6 +17,12 @@ import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { S3BucketConstruct } from '../constructs/s3-bucket-construct';
 import * as ssm from 'aws-cdk-lib/aws-ssm';
+import { v4 as uuidv4 } from 'uuid';
+
+function getShortUuidSegment(): string {
+	const fullUuid = uuidv4();
+	return fullUuid.split('-')[0];
+}
 
 export class Buckets extends Construct {
 	public readonly glueAssetBucket: S3BucketConstruct;
@@ -28,14 +34,15 @@ export class Buckets extends Construct {
 		super(scope, id);
 
 		// Glue Asset Bucket
-		this.glueAssetBucket = new S3BucketConstruct(this, 'GlueAsset', {
+		this.glueAssetBucket = new S3BucketConstruct(this, 'GlueArtifacts', {
+			bucketName: `glue-artifacts-${getShortUuidSegment()}`,
 			cfnOutputName: 'GlueAsset',
 			addEventNotification: true,
 			enforceSSL: true,
 			removalPolicy: cdk.RemovalPolicy.DESTROY,
 			blockPublicAccess: cdk.aws_s3.BlockPublicAccess.BLOCK_ALL,
 			encryption: cdk.aws_s3.BucketEncryption.S3_MANAGED,
-			serverAccessLogsPrefix: '/access-logs/',
+			serverAccessLogsPrefix: 'access-logs/',
 			versioned: true,
 			deleteObjects: true,
 			objectLockEnabled: false,
@@ -51,13 +58,14 @@ export class Buckets extends Construct {
 
 		// Glue Temp Bucket
 		this.glueTempBucket = new S3BucketConstruct(this, 'GlueTemp', {
+			bucketName: `glue-temp-${getShortUuidSegment()}`,
 			cfnOutputName: 'GlueTemp',
 			addEventNotification: true,
 			enforceSSL: true,
 			removalPolicy: cdk.RemovalPolicy.DESTROY,
 			blockPublicAccess: cdk.aws_s3.BlockPublicAccess.BLOCK_ALL,
 			encryption: cdk.aws_s3.BucketEncryption.S3_MANAGED,
-			serverAccessLogsPrefix: '/access-logs/',
+			serverAccessLogsPrefix: 'access-logs/',
 			versioned: true,
 			deleteObjects: false,
 			objectLockEnabled: false,
@@ -72,18 +80,23 @@ export class Buckets extends Construct {
 		});
 
 		// Archive Data Glue Bucket
-		this.archiveDataBucket = new S3BucketConstruct(this, 'ArchiveData', {
-			cfnOutputName: 'ArchiveData',
-			addEventNotification: true,
-			enforceSSL: true,
-			removalPolicy: cdk.RemovalPolicy.DESTROY,
-			blockPublicAccess: cdk.aws_s3.BlockPublicAccess.BLOCK_ALL,
-			encryption: cdk.aws_s3.BucketEncryption.S3_MANAGED,
-			serverAccessLogsPrefix: '/access-logs/',
-			versioned: true,
-			deleteObjects: false,
-			objectLockEnabled: true,
-		});
+		this.archiveDataBucket = new S3BucketConstruct(
+			this,
+			'ArchiveStructuredData',
+			{
+				bucketName: `archive-structured-data-${getShortUuidSegment()}`,
+				cfnOutputName: 'ArchiveData',
+				addEventNotification: true,
+				enforceSSL: true,
+				removalPolicy: cdk.RemovalPolicy.DESTROY,
+				blockPublicAccess: cdk.aws_s3.BlockPublicAccess.BLOCK_ALL,
+				encryption: cdk.aws_s3.BucketEncryption.S3_MANAGED,
+				serverAccessLogsPrefix: 'access-logs/',
+				versioned: true,
+				deleteObjects: false,
+				objectLockEnabled: true,
+			}
+		);
 
 		new ssm.StringParameter(this, 'CreateS3TableDataGlueParam', {
 			parameterName: '/job/s3-bucket-table-data',
@@ -95,13 +108,14 @@ export class Buckets extends Construct {
 
 		// Athena Temp Bucket
 		this.athenaTempBucket = new S3BucketConstruct(this, 'AthenaTemp', {
+			bucketName: `athena-temp-${getShortUuidSegment()}`,
 			cfnOutputName: 'AthenaTemp',
 			addEventNotification: true,
 			enforceSSL: true,
 			removalPolicy: cdk.RemovalPolicy.DESTROY,
 			blockPublicAccess: cdk.aws_s3.BlockPublicAccess.BLOCK_ALL,
 			encryption: cdk.aws_s3.BucketEncryption.S3_MANAGED,
-			serverAccessLogsPrefix: '/access-logs/',
+			serverAccessLogsPrefix: 'access-logs/',
 			versioned: true,
 			deleteObjects: false,
 			objectLockEnabled: false,

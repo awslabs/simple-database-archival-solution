@@ -41,6 +41,8 @@ export interface S3BucketConstructProps extends cdk.StackProps {
 
 	readonly lambdaFn?: cdk.aws_lambda.Function;
 
+	readonly bucketName: string;
+
 	readonly sqs?: cdk.aws_sqs.Queue;
 
 	readonly thisBucket?: boolean;
