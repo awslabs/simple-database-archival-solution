@@ -87,6 +87,12 @@ export class CloudFrontS3WebSiteConstruct extends Construct {
 				},
 				errorResponses: [
 					{
+						httpStatus: 403,
+						responseHttpStatus: 200,
+						responsePagePath: '/index.html',
+						ttl: cdk.Duration.minutes(30),
+					},
+					{
 						httpStatus: 404,
 						responseHttpStatus: 200,
 						responsePagePath: '/index.html',
