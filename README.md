@@ -12,15 +12,15 @@ Simple Database Archival Solution (SDAS) is an open source solution, which you c
 
 As businesses accumulate more and more data over time, the need for effective database archiving solutions has become increasingly important, for example moving older, rarely used data to an archive. Businesses can reduce the size of their active databases, which can improve performance and reduce storage costs. Archiving also helps organizations meet legal and regulatory requirements for data retention, as well as ensure that important data is available for future use and discovery, if necessary. Out of the box, SDAS provides the following key features:
 
--   Support for Oracle, Microsoft SQL Server, MySQL or PostgreSQL
--   Identify the data type and table schema
--   Validate the data on the target after the archiving process has completed
--   Ability to configure WORM (“Write Once Read Many”)
--   Ability to defined data retention period for the data
--   Detailed information about the status of the data
--   Perform various data validation and integrity checks
--   Make it simple for operation to ingest and archive database
--   Ability to preview data archived in Amazon S3
+- Support for Oracle, Microsoft SQL Server, MySQL or PostgreSQL
+- Identify the data type and table schema
+- Validate the data on the target after the archiving process has completed
+- Ability to configure WORM (“Write Once Read Many”)
+- Ability to defined data retention period for the data
+- Detailed information about the status of the data
+- Perform various data validation and integrity checks
+- Make it simple for operation to ingest and archive database
+- Ability to preview data archived in Amazon S3
 
 ## Give SDAS a try!
 
@@ -168,11 +168,11 @@ npm run destroy
 
 The top level project structure follows a responsibility structure:
 
--   `/api` - contains lambda functions for the api
--   `/deploy` - contains cloud development kit (CDK) to deploy the solution
--   `/web-app` - contains the SPA web client for the application
--   `/functions` - contains the lambda functions not associated with APIs
--   `/step-functions` - contains the lambda functions for AWS Step Functions
+- `/api` - contains lambda functions for the api
+- `/deploy` - contains cloud development kit (CDK) to deploy the solution
+- `/web-app` - contains the SPA web client for the application
+- `/functions` - contains the lambda functions not associated with APIs
+- `/step-functions` - contains the lambda functions for AWS Step Functions
 
 ---
 
@@ -236,6 +236,10 @@ This section covers data type conversions that SDAS processes between PostgreSQL
 Build fails during a docker step due to `OSError: [Errno 28] No space left on device:` or something similar.
 Open docker desktop, click on `Images`, click on `Clean up`, check `Unused` and `Dangling`, then click `Remove`.  
 or run from the command line: `docker image prune -a`
+
+## Disclaimer
+
+This solution provides a public-facing web application where users can access. User authentication is managed through Amazon Cognito using username and password credentials. You should consider doing your own independent assessment before using the content in this sample for production purposes. This may include (amongst other things) testing, securing, and optimizing the content provided in this sample, based on your specific quality control practices and standards. This solution is provided as-is, without production-grade guarantees. You are responsible for ensuring the solution is suitable for your specific use case, including managing security, compliance, and cost considerations. Deploying this solution may incur AWS charges associated with the use of services such as Amazon S3, AWS Glue, and others.
 
 ## License
 
