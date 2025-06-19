@@ -8,6 +8,8 @@
 
 Simple Database Archival Solution (SDAS) is an open source solution, which you can deploy in your AWS account to archive data to AWS. SDAS will connect to your database which can be on premises or in the cloud, map the schema, perform validation, and finally transfer data to AWS for storage in Amazon S3. This is accomplished by primarily leveraging AWS Step Functions and AWS Glue. The main purpose of SDAS is to provide an out-of-the-box solution that easily allows customers to archive data in the cloud coming from on premises or cloud-hosted databases.
 
+This solution includes a public-facing web application for user access. User authentication is managed through Amazon Cognito using username and password credentials. You should conduct your own independent assessment before using the content in this sample for production purposes. This may include, but is not limited to, testing, securing, and optimizing the content based on your specific quality control practices and standards.
+
 ## What is Simple Database Archival Solution (SDAS)?
 
 As businesses accumulate more and more data over time, the need for effective database archiving solutions has become increasingly important, for example moving older, rarely used data to an archive. Businesses can reduce the size of their active databases, which can improve performance and reduce storage costs. Archiving also helps organizations meet legal and regulatory requirements for data retention, as well as ensure that important data is available for future use and discovery, if necessary. Out of the box, SDAS provides the following key features:
