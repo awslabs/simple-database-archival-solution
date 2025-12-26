@@ -1,0 +1,34 @@
+name: Build
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: checkout repo
+              uses: actions/checkout@v4
+
+            - name: Setup Python Version
+              uses: actions/setup-python@v4
+              with:
+                  python-version: '3.10'
+
+            - name: setup node for the whole package
+              uses: actions/setup-node@v4
+              with:
+                  node-version: '22'
+
+            - name: Install dependencies
+              working-directory: web-app
+              run: npm install
+
+            - name: web-app build
+              working-directory: web-app
+              env:
+                  CI: ''
+              run: npm run build
