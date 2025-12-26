@@ -1,5 +1,5 @@
 /**
- * Copyright 2023 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+ * Copyright 2025 Amazon.com, Inc. and its affiliates. All Rights Reserved.
  *
  * Licensed under the Amazon Software License (the "License").
  * You may not use this file except in compliance with the License.
@@ -19,15 +19,20 @@ import {
 	Header,
 	Tiles,
 } from '@cloudscape-design/components';
+import { useTranslation } from 'react-i18next';
 
 export default function DatabaseTypePanel({
 	databaseEngine,
 	setDatabaseEngine,
 }) {
+	const { t } = useTranslation();
+
 	return (
 		<Container
 			className="custom-screenshot-hide"
-			header={<Header variant="h2">Database Engine</Header>}
+			header={
+				<Header variant="h2">{t('addArchive.databaseEngine')}</Header>
+			}
 		>
 			<FormField stretch={true}>
 				<Tiles
@@ -35,8 +40,7 @@ export default function DatabaseTypePanel({
 						{
 							value: 'oracle',
 							label: 'Oracle',
-							description:
-								'Oracle® Database is a relational database management system developed by Oracle',
+							description: t('addArchive.oracleDescription'),
 							image: (
 								<img
 									height="100px"
@@ -49,8 +53,7 @@ export default function DatabaseTypePanel({
 						{
 							value: 'mysql',
 							label: 'MySQL',
-							description:
-								'MySQL is the most popular open source database in the world',
+							description: t('addArchive.mysqlDescription'),
 							image: (
 								<img
 									height="100px"
@@ -63,8 +66,7 @@ export default function DatabaseTypePanel({
 						{
 							value: 'mssql',
 							label: 'Microsoft SQL Server',
-							description:
-								'Microsoft SQL Server is a relational database management system developed by Microsoft.',
+							description: t('addArchive.mssqlDescription'),
 							image: (
 								<img
 									height="100px"
@@ -77,8 +79,7 @@ export default function DatabaseTypePanel({
 						{
 							value: 'postgresql',
 							label: 'PostgreSQL',
-							description:
-								'PostgreSQL has become the preferred open source relational database for many developers.',
+							description: t('addArchive.postgresqlDescription'),
 							image: (
 								<img
 									height="100px"

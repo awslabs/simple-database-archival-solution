@@ -1,5 +1,5 @@
 /**
- * Copyright 2024 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+ * Copyright 2025 Amazon.com, Inc. and its affiliates. All Rights Reserved.
  *
  * Licensed under the Amazon Software License (the "License").
  * You may not use this file except in compliance with the License.
@@ -56,16 +56,153 @@ export class Iam extends Construct {
 
 		this.awsGlueRole = new Role(this, 'AwsGlueRole', {
 			assumedBy: new iam.ServicePrincipal('glue.amazonaws.com'),
-			description: 'IAM role for AWS Glue',
-			managedPolicies: [
-				iam.ManagedPolicy.fromAwsManagedPolicyName(
-					'service-role/AWSGlueServiceRole'
-				),
-				iam.ManagedPolicy.fromAwsManagedPolicyName(
-					'AmazonS3FullAccess'
-				),
-			],
+			description: 'IAM role for AWS Glue ETL jobs with least privilege permissions',
 		});
+
+		// Glue Data Catalog permissions (from AWSGlueServiceRole)
+		this.awsGlueRole.addToPolicy(
+			new iam.PolicyStatement({
+				sid: 'GlueDataCatalogAccess',
+				effect: iam.Effect.ALLOW,
+				actions: [
+					'glue:GetDatabase',
+					'glue:GetDatabases',
+					'glue:CreateDatabase',
+					'glue:UpdateDatabase',
+					'glue:DeleteDatabase',
+					'glue:GetTable',
+					'glue:GetTables',
+					'glue:CreateTable',
+					'glue:UpdateTable',
+					'glue:DeleteTable',
+					'glue:GetPartition',
+					'glue:GetPartitions',
+					'glue:CreatePartition',
+					'glue:UpdatePartition',
+					'glue:DeletePartition',
+					'glue:BatchCreatePartition',
+					'glue:BatchDeletePartition',
+					'glue:GetConnection',
+					'glue:GetConnections',
+				],
+				resources: [
+					`arn:aws:glue:${awsRegion}:${awsAccountId}:catalog`,
+					`arn:aws:glue:${awsRegion}:${awsAccountId}:database/*`,
+					`arn:aws:glue:${awsRegion}:${awsAccountId}:table/*`,
+					`arn:aws:glue:${awsRegion}:${awsAccountId}:connection/*`,
+				],
+			})
+		);
+
+		// CloudWatch Logs permissions (from AWSGlueServiceRole)
+		this.awsGlueRole.addToPolicy(
+			new iam.PolicyStatement({
+				sid: 'GlueCloudWatchLogsAccess',
+				effect: iam.Effect.ALLOW,
+				actions: [
+					'logs:CreateLogGroup',
+					'logs:CreateLogStream',
+					'logs:PutLogEvents',
+				],
+				resources: [
+					`arn:aws:logs:${awsRegion}:${awsAccountId}:/aws-glue/*`,
+				],
+			})
+		);
+
+		// CloudWatch Metrics permissions (from AWSGlueServiceRole)
+		this.awsGlueRole.addToPolicy(
+			new iam.PolicyStatement({
+				sid: 'GlueCloudWatchMetricsAccess',
+				effect: iam.Effect.ALLOW,
+				actions: ['cloudwatch:PutMetricData'],
+				resources: ['*'], // CloudWatch metrics require wildcard
+				conditions: {
+					StringEquals: {
+						'cloudwatch:namespace': 'Glue',
+					},
+				},
+			})
+		);
+
+		// EC2 VPC permissions (from AWSGlueServiceRole) - required for JDBC connections
+		this.awsGlueRole.addToPolicy(
+			new iam.PolicyStatement({
+				sid: 'GlueVPCAccess',
+				effect: iam.Effect.ALLOW,
+				actions: [
+					'ec2:CreateNetworkInterface',
+					'ec2:DescribeNetworkInterfaces',
+					'ec2:DeleteNetworkInterface',
+					'ec2:DescribeVpcEndpoints',
+					'ec2:DescribeRouteTables',
+					'ec2:DescribeSecurityGroups',
+					'ec2:DescribeSubnets',
+					'ec2:DescribeVpcAttribute',
+				],
+				resources: ['*'], // EC2 describe actions require wildcard
+			})
+		);
+
+		// EC2 network interface tagging (from AWSGlueServiceRole)
+		this.awsGlueRole.addToPolicy(
+			new iam.PolicyStatement({
+				sid: 'GlueNetworkInterfaceTagging',
+				effect: iam.Effect.ALLOW,
+				actions: ['ec2:CreateTags', 'ec2:DeleteTags'],
+				resources: [
+					`arn:aws:ec2:${awsRegion}:${awsAccountId}:network-interface/*`,
+					`arn:aws:ec2:${awsRegion}:${awsAccountId}:security-group/*`,
+					`arn:aws:ec2:${awsRegion}:${awsAccountId}:instance/*`,
+				],
+				conditions: {
+					'ForAllValues:StringEquals': {
+						'aws:TagKeys': ['aws-glue-service-resource'],
+					},
+				},
+			})
+		);
+
+		// S3 bucket-level permissions - scoped to specific buckets only (replaces AmazonS3FullAccess)
+		this.awsGlueRole.addToPolicy(
+			new iam.PolicyStatement({
+				sid: 'GlueS3BucketAccess',
+				effect: iam.Effect.ALLOW,
+				actions: [
+					's3:GetBucketLocation',
+					's3:ListBucket',
+					's3:ListBucketMultipartUploads',
+					's3:GetBucketAcl',
+				],
+				resources: [
+					glueAssetBucket.bucket.bucketArn,
+					glueTempBucket.bucket.bucketArn,
+					archiveDataBucket.bucket.bucketArn,
+					athenaTempBucket.bucket.bucketArn,
+				],
+			})
+		);
+
+		// S3 object-level permissions - scoped to specific buckets only (replaces AmazonS3FullAccess)
+		this.awsGlueRole.addToPolicy(
+			new iam.PolicyStatement({
+				sid: 'GlueS3ObjectAccess',
+				effect: iam.Effect.ALLOW,
+				actions: [
+					's3:GetObject',
+					's3:PutObject',
+					's3:DeleteObject',
+					's3:ListMultipartUploadParts',
+					's3:AbortMultipartUpload',
+				],
+				resources: [
+					`${glueAssetBucket.bucket.bucketArn}/*`, // Read Glue ETL scripts
+					`${glueTempBucket.bucket.bucketArn}/*`, // Temporary Spark storage
+					`${archiveDataBucket.bucket.bucketArn}/*`, // Write archived Parquet files
+					`${athenaTempBucket.bucket.bucketArn}/*`, // Athena query results
+				],
+			})
+		);
 
 		new ssm.StringParameter(this, 'AwsGlueRoleParameter', {
 			parameterName: '/glue/glue-role',
@@ -185,17 +322,37 @@ export class Iam extends Construct {
 		});
 
 		this.glueCatalogPolicy = new iam.PolicyStatement({
-			actions: ['glue:GetTable'],
+			actions: [
+				'glue:GetDatabase',
+				'glue:GetTable',
+				'glue:GetTables',
+				'glue:DeleteTable',
+				'glue:CreateTable',
+				'glue:UpdateTable',
+			],
 			resources: [`arn:aws:glue:${awsRegion}:${awsAccountId}:catalog`],
 		});
 
 		this.glueDatabasePolicy = new iam.PolicyStatement({
-			actions: ['glue:GetTable'],
+			actions: [
+				'glue:GetDatabase',
+				'glue:GetTable',
+				'glue:GetTables',
+				'glue:DeleteTable',
+				'glue:CreateTable',
+				'glue:UpdateTable',
+			],
 			resources: [`arn:aws:glue:${awsRegion}:${awsAccountId}:database/*`],
 		});
 
 		this.glueTablePolicy = new iam.PolicyStatement({
-			actions: ['glue:GetTable'],
+			actions: [
+				'glue:GetTable',
+				'glue:GetTables',
+				'glue:DeleteTable',
+				'glue:CreateTable',
+				'glue:UpdateTable',
+			],
 			resources: [`arn:aws:glue:${awsRegion}:${awsAccountId}:table/*`],
 		});
 

@@ -1,5 +1,5 @@
 /**
- * Copyright 2024 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+ * Copyright 2025 Amazon.com, Inc. and its affiliates. All Rights Reserved.
  *
  * Licensed under the Amazon Software License (the "License").
  * You may not use this file except in compliance with the License.
@@ -112,7 +112,7 @@ export class Apis extends Construct {
 					subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
 				},
 				allowPublicSubnet: true,
-				runtime: cdk.aws_lambda.Runtime.PYTHON_3_9,
+				runtime: cdk.aws_lambda.Runtime.PYTHON_3_10,
 				handler: 'lambda_handler',
 				index: 'main.py',
 				entry: '../api/archive/source/test-connection',
@@ -164,7 +164,7 @@ export class Apis extends Construct {
 					subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
 				},
 				allowPublicSubnet: true,
-				runtime: cdk.aws_lambda.Runtime.PYTHON_3_9,
+				runtime: cdk.aws_lambda.Runtime.PYTHON_3_10,
 				handler: 'lambda_handler',
 				index: 'main.py',
 				entry: '../functions/async-get-schema',
@@ -207,7 +207,7 @@ export class Apis extends Construct {
 			'ApiGetDatabaseSourceTablesLambda',
 			{
 				role: apiRole,
-				runtime: cdk.aws_lambda.Runtime.PYTHON_3_9,
+				runtime: cdk.aws_lambda.Runtime.PYTHON_3_10,
 				handler: 'lambda_handler',
 				index: 'main.py',
 				entry: '../api/archive/source/get-tables-async',
@@ -229,7 +229,7 @@ export class Apis extends Construct {
 
 		// [START] Legal Hold
 		const legalHold = new lambdaPython.PythonFunction(this, 'LegalHoldFn', {
-			runtime: cdk.aws_lambda.Runtime.PYTHON_3_9,
+			runtime: cdk.aws_lambda.Runtime.PYTHON_3_10,
 			handler: 'lambda_handler',
 			index: 'main.py',
 			entry: '../api/archive/legal',
@@ -284,7 +284,7 @@ export class Apis extends Construct {
 			this,
 			'ExpirationFn',
 			{
-				runtime: cdk.aws_lambda.Runtime.PYTHON_3_9,
+				runtime: cdk.aws_lambda.Runtime.PYTHON_3_10,
 				handler: 'lambda_handler',
 				index: 'main.py',
 				entry: '../api/archive/expiration',
@@ -339,7 +339,7 @@ export class Apis extends Construct {
 			this,
 			'ValidateArchiveFn',
 			{
-				runtime: cdk.aws_lambda.Runtime.PYTHON_3_9,
+				runtime: cdk.aws_lambda.Runtime.PYTHON_3_10,
 				handler: 'lambda_handler',
 				index: 'main.py',
 				entry: '../api/archive/validate',
@@ -370,7 +370,7 @@ export class Apis extends Construct {
 
 		// [START] api/archive/archive
 		const archive = new lambdaPython.PythonFunction(this, 'ArchiveFn', {
-			runtime: cdk.aws_lambda.Runtime.PYTHON_3_9,
+			runtime: cdk.aws_lambda.Runtime.PYTHON_3_10,
 			handler: 'lambda_handler',
 			index: 'main.py',
 			entry: '../api/archive/archive',
@@ -401,7 +401,7 @@ export class Apis extends Construct {
 		const sdasApis = [
 			{
 				name: 'TablesStatus',
-				runtime: cdk.aws_lambda.Runtime.PYTHON_3_9,
+				runtime: cdk.aws_lambda.Runtime.PYTHON_3_10,
 				handler: 'lambda_handler',
 				index: 'main.py',
 				entry: '../api/archive/source/get-tables-async/status',
@@ -416,7 +416,7 @@ export class Apis extends Construct {
 			},
 			{
 				name: 'TablesResult',
-				runtime: cdk.aws_lambda.Runtime.PYTHON_3_9,
+				runtime: cdk.aws_lambda.Runtime.PYTHON_3_10,
 				handler: 'lambda_handler',
 				index: 'main.py',
 				entry: '../api/archive/source/get-tables-async/results',
@@ -431,7 +431,7 @@ export class Apis extends Construct {
 			},
 			{
 				name: 'CreateArchive',
-				runtime: cdk.aws_lambda.Runtime.PYTHON_3_9,
+				runtime: cdk.aws_lambda.Runtime.PYTHON_3_10,
 				handler: 'lambda_handler',
 				index: 'main.py',
 				entry: '../api/archive/create',
@@ -448,7 +448,7 @@ export class Apis extends Construct {
 			},
 			{
 				name: 'DeleteDatabaseItem',
-				runtime: cdk.aws_lambda.Runtime.PYTHON_3_9,
+				runtime: cdk.aws_lambda.Runtime.PYTHON_3_10,
 				handler: 'lambda_handler',
 				index: 'main.py',
 				entry: '../api/archive/delete',
@@ -465,7 +465,7 @@ export class Apis extends Construct {
 			},
 			{
 				name: 'ListArchives',
-				runtime: cdk.aws_lambda.Runtime.PYTHON_3_9,
+				runtime: cdk.aws_lambda.Runtime.PYTHON_3_10,
 				handler: 'lambda_handler',
 				index: 'main.py',
 				entry: '../api/archives/list',
@@ -484,7 +484,7 @@ export class Apis extends Construct {
 			},
 			{
 				name: 'GetArchive',
-				runtime: cdk.aws_lambda.Runtime.PYTHON_3_9,
+				runtime: cdk.aws_lambda.Runtime.PYTHON_3_10,
 				handler: 'lambda_handler',
 				index: 'main.py',
 				entry: '../api/archive/get',
@@ -501,7 +501,7 @@ export class Apis extends Construct {
 			},
 			{
 				name: 'RunArchiveJob',
-				runtime: cdk.aws_lambda.Runtime.PYTHON_3_9,
+				runtime: cdk.aws_lambda.Runtime.PYTHON_3_10,
 				handler: 'lambda_handler',
 				index: 'main.py',
 				entry: '../api/job/run',
@@ -522,7 +522,7 @@ export class Apis extends Construct {
 			},
 			{
 				name: 'AthenaQuery',
-				runtime: cdk.aws_lambda.Runtime.PYTHON_3_9,
+				runtime: cdk.aws_lambda.Runtime.PYTHON_3_10,
 				handler: 'lambda_handler',
 				index: 'main.py',
 				entry: '../api/archive/query',
@@ -533,12 +533,94 @@ export class Apis extends Construct {
 				api: this.api.apiGatewayV2,
 				iamInlinePolicy: [
 					iam.ssmGetParameterPolicy,
+					iam.dynamoDbReadOnlyPolicy,
 					iam.athenaPolicy,
 					iam.s3GetObjectAthenaQueryPolicy,
 					iam.glueCatalogPolicy,
 					iam.glueDatabasePolicy,
 					iam.glueTablePolicy,
 					iam.glueS3BucketPolicy,
+				],
+			},
+			{
+				name: 'ListViews',
+				runtime: cdk.aws_lambda.Runtime.PYTHON_3_10,
+				handler: 'lambda_handler',
+				index: 'main.py',
+				entry: '../api/archive/views/list',
+				timeout: cdk.Duration.seconds(30),
+				environment: {
+					REGION: awsRegion,
+				},
+				routePath: '/api/archive/views/list',
+				methods: [apigwv2.HttpMethod.POST],
+				api: this.api.apiGatewayV2,
+				iamInlinePolicy: [
+					iam.ssmGetParameterPolicy,
+					iam.dynamoDbReadOnlyPolicy,
+					iam.glueCatalogPolicy,
+					iam.glueDatabasePolicy,
+					iam.glueTablePolicy,
+				],
+			},
+			{
+				name: 'DeleteView',
+				runtime: cdk.aws_lambda.Runtime.PYTHON_3_10,
+				handler: 'lambda_handler',
+				index: 'main.py',
+				entry: '../api/archive/views/delete',
+				timeout: cdk.Duration.seconds(30),
+				environment: {
+					REGION: awsRegion,
+				},
+				routePath: '/api/archive/views/delete',
+				methods: [apigwv2.HttpMethod.POST],
+				api: this.api.apiGatewayV2,
+				iamInlinePolicy: [
+					iam.ssmGetParameterPolicy,
+					iam.dynamoDbReadOnlyPolicy,
+					iam.glueCatalogPolicy,
+					iam.glueDatabasePolicy,
+					iam.glueTablePolicy,
+				],
+			},
+			{
+				name: 'AthenaQueryFull',
+				runtime: cdk.aws_lambda.Runtime.PYTHON_3_10,
+				handler: 'lambda_handler',
+				index: 'main.py',
+				entry: '../api/archive/query-full',
+				timeout: cdk.Duration.minutes(15),
+				environment: {},
+				routePath: '/api/archive/query-full',
+				methods: [apigwv2.HttpMethod.POST],
+				api: this.api.apiGatewayV2,
+				iamInlinePolicy: [
+					iam.ssmGetParameterPolicy,
+					iam.dynamoDbReadOnlyPolicy,
+					iam.athenaPolicy,
+					iam.s3GetObjectAthenaQueryPolicy,
+					iam.glueCatalogPolicy,
+					iam.glueDatabasePolicy,
+					iam.glueTablePolicy,
+					iam.glueS3BucketPolicy,
+				],
+			},
+			{
+				name: 'DownloadResults',
+				runtime: cdk.aws_lambda.Runtime.PYTHON_3_10,
+				handler: 'lambda_handler',
+				index: 'main.py',
+				entry: '../api/archive/download',
+				timeout: cdk.Duration.seconds(30),
+				environment: {},
+				routePath: '/api/archive/download',
+				methods: [apigwv2.HttpMethod.POST],
+				api: this.api.apiGatewayV2,
+				iamInlinePolicy: [
+					iam.ssmGetParameterPolicy,
+					iam.athenaPolicy,
+					iam.s3GetObjectAthenaQueryPolicy,
 				],
 			},
 		];

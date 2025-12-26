@@ -1,5 +1,5 @@
 /**
- * Copyright 2023 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+ * Copyright 2025 Amazon.com, Inc. and its affiliates. All Rights Reserved.
  *
  * Licensed under the Amazon Software License (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
 	SpaceBetween,
 	Box,
@@ -63,6 +64,7 @@ export function ViewJobs({
 	archiveState: any;
 	setArchiveState: any;
 }) {
+	const { t } = useTranslation();
 	let archive: any = {};
 	archive = useParams();
 
@@ -104,18 +106,18 @@ export function ViewJobs({
 			filtering: {
 				empty: (
 					<EmptyState
-						title="No instances"
-						subtitle="No instances to display."
-						action={<Button>Create instance</Button>}
+						title={t('common.noInstances')}
+						subtitle={t('common.noInstancesToDisplay')}
+						action={<Button>{t('common.createInstance')}</Button>}
 					/>
 				),
 				noMatch: (
 					<EmptyState
-						title="No matches"
-						subtitle="We can’t find a match."
+						title={t('common.noMatches')}
+						subtitle={t('common.noMatchesSubtitle')}
 						action={
 							<Button onClick={() => actions.setFiltering('')}>
-								Clear filter
+								{t('common.clearFilter')}
 							</Button>
 						}
 					/>
@@ -135,7 +137,7 @@ export function ViewJobs({
 				columnDefinitions={JOB_EXECUTION_COLUMN_DEFINITION}
 				selectedItems={selectedItems}
 				loading={loading}
-				loadingText="Loading Jobs"
+				loadingText={t('jobs.loadingJobs')}
 				selectionType="single"
 				onSelectionChange={(event) => {
 					setIsSelected(true);
@@ -148,13 +150,13 @@ export function ViewJobs({
 							variant="p"
 							color="inherit"
 						>
-							<b>No AWS Glue jobs to display. </b>
+							<b>{t('jobs.noJobs')}</b>
 						</Box>
 					</Box>
 				}
 				header={
 					<TableHeader
-						title="Job Description"
+						title={t('jobs.jobDescription')}
 						selectedItems={selectedItems}
 						totalItems={data}
 						counter={
@@ -169,7 +171,7 @@ export function ViewJobs({
 									iconAlign="right"
 									iconName="refresh"
 								>
-									Refresh
+									{t('common.refresh')}
 								</Button>
 							</SpaceBetween>
 						}
@@ -185,8 +187,8 @@ export function ViewJobs({
 				filter={
 					<TextFilter
 						{...filterProps}
-						filteringAriaLabel="Filter Jobs"
-						filteringPlaceholder="Find Jobs"
+						filteringAriaLabel={t('jobs.filterJobs')}
+						filteringPlaceholder={t('jobs.findJobs')}
 					/>
 				}
 			/>
@@ -198,13 +200,17 @@ export function ViewJobs({
 							id: 'description',
 							content: (e) => {
 								return (
-									<ExpandableSection header="Details">
+									<ExpandableSection
+										header={t('jobs.details')}
+									>
 										<Table
 											columnDefinitions={
 												JOB_DESCRIPTION_DEFINITION
 											}
 											items={selectedItems}
-											loadingText="Loading resources"
+											loadingText={t(
+												'tables.loadingResources'
+											)}
 											sortingDisabled
 											variant="embedded"
 											empty={
@@ -212,7 +218,11 @@ export function ViewJobs({
 													textAlign="center"
 													color="inherit"
 												>
-													<b>No resources</b>
+													<b>
+														{t(
+															'dataAccess.noResources'
+														)}
+													</b>
 													<Box
 														padding={{
 															bottom: 's',
@@ -220,7 +230,9 @@ export function ViewJobs({
 														variant="p"
 														color="inherit"
 													>
-														No resources to display.
+														{t(
+															'dataAccess.noResourcesToDisplay'
+														)}
 													</Box>
 												</Box>
 											}
@@ -234,8 +246,8 @@ export function ViewJobs({
 				}}
 				cardsPerRow={[{ cards: 1 }, { minWidth: 500, cards: 1 }]}
 				items={isSelected ? selectedItems : []}
-				loadingText="Loading Job Information"
-				header={<Header>Job Information</Header>}
+				loadingText={t('jobs.loadingJobInformation')}
+				header={<Header>{t('jobs.jobInformation')}</Header>}
 			/>
 		</SpaceBetween>
 	);

@@ -1,5 +1,5 @@
 /**
- * Copyright 2023 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+ * Copyright 2025 Amazon.com, Inc. and its affiliates. All Rights Reserved.
  *
  * Licensed under the Amazon Software License (the "License").
  * You may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { API } from 'aws-amplify';
 import {
 	SpaceBetween,
@@ -41,6 +42,7 @@ import { VALIDATION_TABLE_EXECUTION_COLUMN_DEFINITION } from './details-config';
 // import '../../styles/base.scss';
 // import '../../styles/top-navigation.scss';
 import CodeEditor from '@awsui/components-react/code-editor';
+import { ViewFullDataAccess } from './ViewFullDataAccess';
 
 function EmptyState({
 	title,
@@ -74,21 +76,26 @@ export function ViewData(
 		setArchiveState: any;
 	}
 ) {
+	const { t } = useTranslation();
 	const [ace, setAce] = useState<typeof import('ace-builds') | undefined>(
 		undefined
 	);
 	const [aceLoading, setAceLoading] = useState(true);
-	const [sqlStatement, setSqlStatement] = useState('Please select a table');
+	const [sqlStatement, setSqlStatement] = useState(
+		t('dataAccess.selectTable')
+	);
 	const [loading, setLoading] = useState(true);
-	const [selectedItems, setSelectedItems] = useState([]);
+	const [selectedItems, setSelectedItems] = useState<any[]>([]);
 	const [isSelected, setIsSelected] = useState(selectedItems.length === 1);
-	const [data, setData] = useState([]);
-	const [fullData, setFullData] = useState({});
+	const [data, setData] = useState<any[]>([]);
+	const [fullData, setFullData] = useState<any>({});
 	const [preferences] = useState({
 		pageSize: 10,
 	});
-	const [columnDefinitionsState, setColumnDefinitionsState] = useState([]);
-	const [tableRows, setTableRows] = useState([]);
+	const [columnDefinitionsState, setColumnDefinitionsState] = useState<any[]>(
+		[]
+	);
+	const [tableRows, setTableRows] = useState<any[]>([]);
 	const [gettingQuery, setGettingQuery] = useState(false);
 	const [gettingQueryFailed, setGettingQueryFailed] = useState(false);
 
@@ -105,27 +112,36 @@ export function ViewData(
 	};
 
 	const i18nStrings = {
-		loadingState: 'Loading code editor',
-		errorState: 'There was an error loading the code editor.',
-		errorStateRecovery: 'Retry',
+		loadingState: t('validationPage.codeEditorLoading'),
+		errorState: t('validationPage.codeEditorError'),
+		errorStateRecovery: t('validationPage.retry'),
 
-		editorGroupAriaLabel: 'Code editor',
-		statusBarGroupAriaLabel: 'Status bar',
+		editorGroupAriaLabel: t('validationPage.editorGroupAriaLabel'),
+		statusBarGroupAriaLabel: t('validationPage.statusBarGroupAriaLabel'),
 
-		cursorPosition: (row: any, column: any) => `Ln ${row}, Col ${column}`,
-		errorsTab: 'Errors',
-		warningsTab: 'Warnings',
-		preferencesButtonAriaLabel: 'Preferences',
+		cursorPosition: (row: any, column: any) =>
+			t('validationPage.cursorPosition', { row, column }),
+		errorsTab: t('validationPage.errorsTab'),
+		warningsTab: t('validationPage.warningsTab'),
+		preferencesButtonAriaLabel: t(
+			'validationPage.preferencesButtonAriaLabel'
+		),
 
-		paneCloseButtonAriaLabel: 'Close',
+		paneCloseButtonAriaLabel: t('validationPage.paneCloseButtonAriaLabel'),
 
-		preferencesModalHeader: 'Preferences',
-		preferencesModalCancel: 'Cancel',
-		preferencesModalConfirm: 'Confirm',
-		preferencesModalWrapLines: 'Wrap lines',
-		preferencesModalTheme: 'Theme',
-		preferencesModalLightThemes: 'Light themes',
-		preferencesModalDarkThemes: 'Dark themes',
+		preferencesModalHeader: t('validationPage.preferencesModalHeader'),
+		preferencesModalCancel: t('validationPage.preferencesModalCancel'),
+		preferencesModalConfirm: t('validationPage.preferencesModalConfirm'),
+		preferencesModalWrapLines: t(
+			'validationPage.preferencesModalWrapLines'
+		),
+		preferencesModalTheme: t('validationPage.preferencesModalTheme'),
+		preferencesModalLightThemes: t(
+			'validationPage.preferencesModalLightThemes'
+		),
+		preferencesModalDarkThemes: t(
+			'validationPage.preferencesModalDarkThemes'
+		),
 	};
 
 	let archive: any = {};
@@ -139,7 +155,29 @@ export function ViewData(
 		};
 		const response = await API.post('api', '/api/archive/get', data);
 		setArchiveState(response.Item.archive_status);
-		setData(response.Item.table_details);
+
+		// Get tables
+		const tables = response.Item.table_details || [];
+
+		// Get views
+		let views = [];
+		try {
+			const viewsResponse = await API.post(
+				'api',
+				'/api/archive/views/list',
+				data
+			);
+			views = (viewsResponse.views || []).map((view: any) => ({
+				table: view.name,
+				type: 'view',
+				columns: view.columns,
+			}));
+		} catch (error) {
+			console.error('Error fetching views:', error);
+		}
+
+		// Combine tables and views
+		setData([...tables, ...views]);
 		setFullData(response.Item);
 		setLoading(false);
 	};
@@ -148,19 +186,10 @@ export function ViewData(
 		const validationQueueindicator = archiveState === 'Archived';
 
 		if (validationQueueindicator) {
-			setSqlStatement(
-				`SELECT * FROM \"${fullData['id']}-${fullData[
-					'database'
-				].toLowerCase()}-database\".\"${fullData['id']}-${fullData[
-					'database'
-				].toLowerCase()}-${data[0]['table']}-table\" limit 10;`
-			);
-
-			return `SELECT * FROM \"${fullData['id']}-${fullData[
-				'database'
-			].toLowerCase()}-database\".\"${fullData['id']}-${fullData[
-				'database'
-			].toLowerCase()}-${data[0]['table']}-table\" limit 10;`;
+			// Use simplified table name - backend will transform it automatically
+			const simplifiedQuery = `SELECT * FROM ${data[0]['table']} LIMIT 10;`;
+			setSqlStatement(simplifiedQuery);
+			return simplifiedQuery;
 		} else {
 			return '';
 		}
@@ -185,20 +214,15 @@ export function ViewData(
 					for (const column in response['ResultSet']['Rows'][0][
 						header
 					]) {
+						const columnName =
+							response['ResultSet']['Rows'][0][header][column][
+								'VarCharValue'
+							];
 						tableHeaders.push({
-							id: response['ResultSet']['Rows'][0][header][
-								column
-							]['VarCharValue'],
-							header: response['ResultSet']['Rows'][0][header][
-								column
-							]['VarCharValue'],
-							cell: (item: { name: any }) =>
-								item[
-									response['ResultSet']['Rows'][0][header][
-										column
-									]['VarCharValue']
-								] || '-',
-							sortingField: 'name',
+							id: columnName,
+							header: columnName,
+							cell: (item: any) => item[columnName] || '-',
+							sortingField: columnName,
 						});
 					}
 				}
@@ -209,7 +233,7 @@ export function ViewData(
 					if (rows !== '0') {
 						for (const row in response['ResultSet']['Rows'][rows]) {
 							const rowValues: any = [];
-							const rowKeys = {};
+							const rowKeys: any = {};
 
 							for (const keys in tableHeaders) {
 								const key = tableHeaders[keys].id;
@@ -217,10 +241,6 @@ export function ViewData(
 									response['ResultSet']['Rows'][rows][row][
 										keys
 									]['VarCharValue'];
-								rowKeys['description'] =
-									'This is the first item';
-								rowKeys['type'] = '1A';
-								rowKeys['size'] = 'Small';
 							}
 							tableRows.push(rowKeys);
 						}
@@ -246,8 +266,6 @@ export function ViewData(
 					.then(() => {
 						ace.config.set('useStrictCSP', true);
 						ace.config.set('loadWorkerFromBlob', false);
-						ace.config.set('readOnly', false);
-						ace.config.set('maxLines', 0);
 						setAce(ace);
 						setAceLoading(false);
 					})
@@ -271,18 +289,18 @@ export function ViewData(
 		filtering: {
 			empty: (
 				<EmptyState
-					title="No instances"
-					subtitle="No instances to display."
-					action={<Button>Create instance</Button>}
+					title={t('common.noInstances')}
+					subtitle={t('common.noInstancesToDisplay')}
+					action={<Button>{t('common.createInstance')}</Button>}
 				/>
 			),
 			noMatch: (
 				<EmptyState
-					title="No matches"
-					subtitle="We can’t find a match."
+					title={t('common.noMatches')}
+					subtitle={t('common.noMatchesSubtitle')}
 					action={
 						<Button onClick={() => actions.setFiltering('')}>
-							Clear filter
+							{t('common.clearFilter')}
 						</Button>
 					}
 				/>
@@ -295,26 +313,11 @@ export function ViewData(
 
 	return (
 		<SpaceBetween size="xl">
-			<Container
-				header={
-					<Header
-						variant="h2"
-						description="You can access the archived data by using the AWS Management Console, 
-            a JDBC or ODBC connection, the Athena API, the Athena CLI, the AWS SDK, or AWS Tools for 
-            Windows PowerShell."
-					>
-						Full Data Access
-					</Header>
-				}
-			>
-				<Link
-					href="https://docs.aws.amazon.com/athena/latest/ug/accessing-ate.html"
-					external
-					variant="info"
-				>
-					Accessing Athena
-				</Link>
-			</Container>
+			<ViewFullDataAccess
+				archiveState={archiveState}
+				fullData={fullData}
+				loading={loading}
+			/>
 
 			<Table
 				className="origins-table"
@@ -322,7 +325,7 @@ export function ViewData(
 				columnDefinitions={VALIDATION_TABLE_EXECUTION_COLUMN_DEFINITION}
 				selectedItems={selectedItems}
 				loading={loading}
-				loadingText="Loading Tables"
+				loadingText={t('dataAccess.loadingTables')}
 				selectionType="single"
 				onSelectionChange={({ detail }) => {
 					setAceLoading(true);
@@ -335,19 +338,19 @@ export function ViewData(
 				}}
 				empty={
 					<Box textAlign="center" color="inherit">
-						<b>No resources</b>
+						<b>{t('dataAccess.noResources')}</b>
 						<Box
 							padding={{ bottom: 's' }}
 							variant="p"
 							color="inherit"
 						>
-							No resources to display.
+							{t('dataAccess.noResourcesToDisplay')}
 						</Box>
 					</Box>
 				}
 				header={
 					<TableHeader
-						title="Data Preview"
+						title={t('dataAccess.dataPreview')}
 						selectedItems={selectedItems}
 						totalItems={data}
 						selectionType="single"
@@ -374,28 +377,30 @@ export function ViewData(
 				filter={
 					<TextFilter
 						{...filterProps}
-						filteringAriaLabel="Filter Tables"
-						filteringPlaceholder="Find Tables"
+						filteringAriaLabel={t('dataAccess.filterTables')}
+						filteringPlaceholder={t('dataAccess.findTables')}
 					/>
 				}
 			/>
 
-			<ExpandableSection header="Query">
+			<ExpandableSection header={t('dataAccess.singleTableQuery')}>
 				<SpaceBetween size="l">
 					<Container
 						header={
 							<Header
 								variant="h2"
-								description="The query editor is limited to 10 rows of data access."
+								description={t(
+									'dataAccess.singleTableDescription'
+								)}
 							>
-								Query Editor
+								{t('dataAccess.singleTableQueryEditor')}
 							</Header>
 						}
 						footer={
 							<SpaceBetween direction="vertical" size="s">
 								{gettingQueryFailed ? (
 									<StatusIndicator type="error">
-										Failed to Execute Query
+										{t('dataAccess.queryFailed')}
 									</StatusIndicator>
 								) : (
 									<></>
@@ -409,7 +414,7 @@ export function ViewData(
 										onClick={executeQuery}
 										variant="primary"
 									>
-										Execute Query
+										{t('dataAccess.executeQuery')}
 									</Button>
 								)}
 							</SpaceBetween>
@@ -425,28 +430,27 @@ export function ViewData(
 							onPreferencesChange={({ detail }) =>
 								handleCodeEditorPreferencesChange(detail)
 							}
-							//   onDelayedChange={({ detail }) => console.log(detail)}
 							i18nStrings={i18nStrings}
 						/>
 					</Container>
 					<Table
 						columnDefinitions={columnDefinitionsState}
 						items={tableRows}
-						loadingText="Loading resources"
+						loadingText={t('dataAccess.loadingResults')}
 						sortingDisabled
 						empty={
 							<Box textAlign="center" color="inherit">
-								<b>No resources</b>
+								<b>{t('dataAccess.noResources')}</b>
 								<Box
 									padding={{ bottom: 's' }}
 									variant="p"
 									color="inherit"
 								>
-									No resources to display.
+									{t('dataAccess.noResourcesToDisplay')}
 								</Box>
 							</Box>
 						}
-						header={<Header> Results </Header>}
+						header={<Header>{t('dataAccess.results')}</Header>}
 					/>
 				</SpaceBetween>
 			</ExpandableSection>

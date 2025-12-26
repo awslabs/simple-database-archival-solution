@@ -1,5 +1,5 @@
 /**
- * Copyright 2023 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+ * Copyright 2025 Amazon.com, Inc. and its affiliates. All Rights Reserved.
  *
  * Licensed under the Amazon Software License (the "License").
  * You may not use this file except in compliance with the License.
@@ -53,8 +53,20 @@ export const suppressCdkNagRules = (stack: cdk.Stack) => {
 				reason: 'Cognito advanced security mode not required for SDAS',
 			},
 			{
-				id: 'AwsSolutions-IAM4',
-				reason: 'AWS managed policies allowed for solution.',
+				id: "AwsSolutions-IAM4",
+                reason: "AWS managed policies allowed for prototype",
+                appliesTo: [
+                    /**
+                     * Add AWS managed policies here that you want to allow in the CDK stack.
+                     * These should be AWS managed policies that are not overly permissive,
+                     * and are thus reasonable to use in prototype code––such as the ones below.
+                     *
+                     * DO NOT ADD e.g. AmazonSageMakerFullAccess, AmazonS3FullAccess, AWSGlueServiceRole
+                     */
+                    "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                    "Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole",
+                    "Policy::arn:<AWS::Partition>:iam::aws:policy/AmazonSSMManagedInstanceCore",
+                ],
 			},
 			{ id: 'AwsSolutions-IAM5', reason: 'IAM wildcard allowed' },
 			{

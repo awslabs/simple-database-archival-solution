@@ -1,5 +1,5 @@
 /**
- * Copyright 2023 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+ * Copyright 2025 Amazon.com, Inc. and its affiliates. All Rights Reserved.
  *
  * Licensed under the Amazon Software License (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,23 +15,24 @@
 
 import Moment from 'react-moment';
 import Badge from '@cloudscape-design/components/badge';
+import i18n from '../../i18n';
 
 export const ARCHIVES_COLUMN_DEFINITIONS = [
 	{
 		id: 'name',
-		header: 'Archive Name',
+		header: i18n.t('archive.archiveName'),
 		cell: (item) => item.archive_name,
 	},
 
 	{
 		id: 'id',
-		header: 'Archive ID',
+		header: i18n.t('archive.archiveId'),
 		cell: (item) => item.id,
 	},
 
 	{
 		id: 'type',
-		header: 'Time Submitted',
+		header: i18n.t('archive.timeSubmitted'),
 		cell: (item) => (
 			<Moment format="MMMM D, YYYY - h:mm:ss a">
 				{item.time_submitted}
@@ -40,26 +41,44 @@ export const ARCHIVES_COLUMN_DEFINITIONS = [
 	},
 	{
 		id: 'archive_status',
-		header: 'Status',
+		header: i18n.t('common.status'),
 		cell: (item) => {
 			if (item.archive_status === 'Failed') {
-				return <Badge color="red">Failed</Badge>;
+				return (
+					<Badge color="red">{i18n.t('archive.statusFailed')}</Badge>
+				);
 			} else if (item.archive_status === 'Intake Queue') {
-				return <Badge>Intake Queue</Badge>;
+				return <Badge>{i18n.t('archive.statusIntakeQueue')}</Badge>;
 			} else if (item.archive_status === 'Validating') {
-				return <Badge color="blue">Validating</Badge>;
+				return (
+					<Badge color="blue">
+						{i18n.t('archive.statusValidating')}
+					</Badge>
+				);
 			} else if (item.archive_status === 'Archiving') {
-				return <Badge color="blue">Archiving</Badge>;
+				return (
+					<Badge color="blue">
+						{i18n.t('archive.statusArchiving')}
+					</Badge>
+				);
 			} else if (item.archive_status === 'Archive Queue') {
-				return <Badge>Archive Queue</Badge>;
+				return <Badge>{i18n.t('archive.statusArchiveQueue')}</Badge>;
 			} else if (item.archive_status === 'Stage Queue') {
-				return <Badge>Stage Queue</Badge>;
+				return <Badge>{i18n.t('archive.statusStageQueue')}</Badge>;
 			} else if (item.archive_status === 'Staging Archive') {
-				return <Badge color="blue">Staging Archive</Badge>;
+				return (
+					<Badge color="blue">
+						{i18n.t('archive.statusStagingArchive')}
+					</Badge>
+				);
 			} else if (item.archive_status === 'Validation Queue') {
-				return <Badge>Validation Queue</Badge>;
+				return <Badge>{i18n.t('archive.statusValidationQueue')}</Badge>;
 			} else if (item.archive_status === 'Archived') {
-				return <Badge color="green">Archived</Badge>;
+				return (
+					<Badge color="green">
+						{i18n.t('archive.statusArchived')}
+					</Badge>
+				);
 			}
 		},
 	},

@@ -1,5 +1,5 @@
 """
-Copyright 2024 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+Copyright 2025 Amazon.com, Inc. and its affiliates. All Rights Reserved.
 
 Licensed under the Amazon Software License (the "License").
 You may not use this file except in compliance with the License.

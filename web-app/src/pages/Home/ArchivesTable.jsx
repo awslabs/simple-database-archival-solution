@@ -1,5 +1,5 @@
 /**
- * Copyright 2023 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+ * Copyright 2025 Amazon.com, Inc. and its affiliates. All Rights Reserved.
  *
  * Licensed under the Amazon Software License (the "License").
  * You may not use this file except in compliance with the License.
@@ -29,8 +29,10 @@ import { API } from 'aws-amplify';
 import { ARCHIVES_COLUMN_DEFINITIONS } from './details-config';
 import { TableHeader } from '../../components/common-components';
 import { paginationLabels } from '../../components/labels';
+import { useTranslation } from 'react-i18next';
 
 export function ArchivesTable() {
+	const { t } = useTranslation();
 	const [visible, setVisible] = useState(false);
 	const [deleteModal, setDeleteModal] = useState(false);
 	const [data, setData] = useState([]);
@@ -100,7 +102,7 @@ export function ArchivesTable() {
 				columnDefinitions={ARCHIVES_COLUMN_DEFINITIONS}
 				loading={loading}
 				selectedItems={selectedItems}
-				loadingText="Loading archives"
+				loadingText={t('archive.loading')}
 				selectionType="single"
 				counter={
 					selectedItems.length
@@ -112,7 +114,7 @@ export function ArchivesTable() {
 				}}
 				header={
 					<TableHeader
-						title="Archives"
+						title={t('archive.title')}
 						selectedItems={selectedItems}
 						totalItems={data}
 						variant="awsui-h1-sticky"
@@ -126,7 +128,7 @@ export function ArchivesTable() {
 									}
 								>
 									<Button disabled={!isSelected}>
-										View details
+										{t('common.viewDetails')}
 									</Button>
 								</Link>
 
@@ -134,7 +136,7 @@ export function ArchivesTable() {
 									onClick={deleteItem}
 									disabled={!isSelected}
 								>
-									Delete
+									{t('common.delete')}
 								</Button>
 								<Button
 									onClick={refresh}
@@ -142,7 +144,7 @@ export function ArchivesTable() {
 									variant="primary"
 									iconName="refresh"
 								>
-									Refresh
+									{t('common.refresh')}
 								</Button>
 							</SpaceBetween>
 						}
@@ -159,8 +161,8 @@ export function ArchivesTable() {
 				filter={
 					<TextFilter
 						{...filterProps}
-						filteringAriaLabel="Filter instances"
-						filteringPlaceholder="Find Archives"
+						filteringAriaLabel={t('common.filter')}
+						filteringPlaceholder={t('archive.noArchives')}
 					/>
 				}
 				empty={
@@ -170,7 +172,7 @@ export function ArchivesTable() {
 							variant="p"
 							color="inherit"
 						>
-							<b>No archives to display</b>
+							<b>{t('archive.noArchives')}</b>
 						</Box>
 					</Box>
 				}
@@ -179,33 +181,30 @@ export function ArchivesTable() {
 			<Modal
 				onDismiss={() => closeDeleteModel(false)}
 				visible={deleteModal}
-				closeAriaLabel="Close modal"
+				closeAriaLabel={t('common.close')}
 				footer={
 					<Box float="right">
 						<SpaceBetween direction="horizontal" size="xs">
 							<Button onClick={closeDeleteModel} variant="link">
-								Cancel
+								{t('common.cancel')}
 							</Button>
 							<Button
 								onClick={confirmDeleteItem}
 								variant="primary"
 							>
-								Yes
+								{t('common.yes')}
 							</Button>
 						</SpaceBetween>
 					</Box>
 				}
-				header="Delete Confirmation"
+				header={t('archive.deleteConfirm')}
 			>
 				<p>
-					Delete Archive ID:
+					{t('archive.archiveId')}:
 					{isSelected ? ` ${selectedItems[0].id}` : ``}
 				</p>
 				<p>
-					<strong>
-						Deleting this archive will NOT delete the data on Amazon
-						S3 or any of the associated AWS Glue jobs.
-					</strong>
+					<strong>{t('archive.deleteConfirmMessage')}</strong>
 				</p>
 			</Modal>
 		</>

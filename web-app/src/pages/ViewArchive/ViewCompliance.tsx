@@ -1,5 +1,5 @@
 /**
- * Copyright 2023 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+ * Copyright 2025 Amazon.com, Inc. and its affiliates. All Rights Reserved.
  *
  * Licensed under the Amazon Software License (the "License").
  * You may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import {
 	Spinner,
 } from '@cloudscape-design/components';
 import { API } from 'aws-amplify';
+import { useTranslation } from 'react-i18next';
 
 export function ViewCompliance(
 	this: any,
@@ -39,6 +40,7 @@ export function ViewCompliance(
 		setArchiveData: any;
 	}
 ) {
+	const { t } = useTranslation();
 	const [checked, setChecked] = useState(archiveData.Item.legal_hold);
 	const [deleteData, setDeleteData] = useState(archiveData.Item.delete_data);
 	const [applyingLegalHold, setApplyingLegalHold] = useState(false);
@@ -111,9 +113,9 @@ export function ViewCompliance(
 				header={
 					<Header
 						variant="h2"
-						description="Enabling legal hold will enable WORM-protection on all objects for this archive. Objects can’t be overwritten or deleted while the legal hold is enabled. A legal hold remains in place until you explicitly remove it. It can take a few minutes to enable or disable."
+						description={t('compliance.legalHoldDescription')}
 					>
-						Legal Hold
+						{t('compliance.legalHold')}
 					</Header>
 				}
 			>
@@ -124,7 +126,9 @@ export function ViewCompliance(
 						onChange={({ detail }) => setLegalHold(detail)}
 						checked={checked}
 					>
-						{checked ? 'Disable Legal Hold' : 'Enable Legal Hold'}
+						{checked
+							? t('compliance.disableLegalHold')
+							: t('compliance.enableLegalHold')}
 					</Toggle>
 				)}
 			</Container>
@@ -132,9 +136,9 @@ export function ViewCompliance(
 				header={
 					<Header
 						variant="h2"
-						description="You can use a lifecycle configuration to define expiration rules to schedule the removal of this object after a pre-defined time period."
+						description={t('compliance.expirationRuleDescription')}
 					>
-						Expiration Rule
+						{t('compliance.expirationRule')}
 					</Header>
 				}
 			>
@@ -149,8 +153,8 @@ export function ViewCompliance(
 							checked={expirationChecked}
 						>
 							{checked
-								? 'Disable Expiration Rule'
-								: 'Enable Expiration Rule'}
+								? t('compliance.disableExpirationRule')
+								: t('compliance.enableExpirationRule')}
 						</Toggle>
 					)}
 
@@ -164,28 +168,34 @@ export function ViewCompliance(
 							}
 							checked={deleteData}
 						>
-							{deleteData ? 'Disable Delete Data' : 'Delete Data'}
+							{deleteData
+								? t('compliance.disableDeleteData')
+								: t('compliance.deleteData')}
 						</Toggle>
 					)}
 
 					<FormField
-						label="Expiration Date"
-						constraintText="Use YYYY/MM/DD format."
+						label={t('compliance.expirationDate')}
+						constraintText={t(
+							'compliance.expirationDateConstraint'
+						)}
 					>
 						<DatePicker
 							onChange={({ detail }) => setValue(detail.value)}
 							value={value}
 							invalid={invalidDate}
 							openCalendarAriaLabel={(selectedDate) =>
-								'Choose expiration Date' +
+								t('compliance.chooseExpirationDate') +
 								(selectedDate
 									? `, selected date is ${selectedDate}`
 									: '')
 							}
-							nextMonthAriaLabel="Next month"
+							nextMonthAriaLabel={t('compliance.nextMonth')}
 							placeholder="YYYY/MM/DD"
-							previousMonthAriaLabel="Previous month"
-							todayAriaLabel="Today"
+							previousMonthAriaLabel={t(
+								'compliance.previousMonth'
+							)}
+							todayAriaLabel={t('compliance.today')}
 						/>
 					</FormField>
 				</SpaceBetween>

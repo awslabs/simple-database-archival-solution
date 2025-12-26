@@ -23,12 +23,14 @@ As businesses accumulate more and more data over time, the need for effective da
 - Perform various data validation and integrity checks
 - Make it simple for operation to ingest and archive database
 - Ability to preview data archived in Amazon S3
+- **Database Views**: Create and manage custom views for complex queries
+- **Full Data Access**: Query entire datasets without row limitations
+- **Bilingual Support**: Complete interface translation (English/Portuguese)
 
 ## Give SDAS a try!
 
 1. Install the Simple Database Archival Solution in your AWS Account.
 2. Send any issues, improvements, or suggestions to us at our GitHub page.
-3. To help you get started, we have also published a [self-guided workshop](https://catalog.us-east-1.prod.workshops.aws/workshops/6f0b8cb6-7b0a-4908-abb9-52a588dc621a/en-US) that walks through the installation and core features of SDAS.
 
 ## Architecture
 
@@ -38,8 +40,8 @@ As businesses accumulate more and more data over time, the need for effective da
 
 To build and deploy SDAS the following tools are required.
 
-1. NodeJs >= 18
-2. Python3 >= 3.9
+1. NodeJs >= 22
+2. Python3 >= 3.10
 3. Docker
 
 ## 1. Build
@@ -143,11 +145,45 @@ If any discrepancies are detected, SDAS provides you with the ability to identif
 
 ### 4.4. Access to Archived Databases
 
-Access to the archived databases in SDAS is limited to authorized users who can access them through the Amazon Athena Console. To explore and visualize the data using Business Intelligence tools, users can download, install, and configure either an ODBC (Open Database Connectivity) or JDBC (Java Database Connectivity) driver to connect to Amazon Athena.
+SDAS provides multiple ways to access and analyze archived data:
 
-SDAS also includes a preview mode through the console, which allows users to quickly view the database that has been archived without the need for additional drivers or tools. This preview mode provides users with a quick and easy way to assess the quality and completeness of the archived data before proceeding with further analysis or querying.
+#### SQL Query Editor
+Execute custom SQL queries across archived data using Amazon Athena. The SQL editor supports:
+- Multi-table JOINs and complex queries
+- Full dataset access without row limitations
+- Download results as CSV files
+- Query history and syntax highlighting
 
-![SDAS Data Access](./images/access.png)
+![SDAS Data Access SQL Query](./images/sql_query.png)
+
+#### Single Table Preview
+Quick preview functionality for single tables, limited to 10 rows, ideal for rapid data validation and schema inspection.
+
+![SDAS Data Access Single Table/View](./images/single_table.png)
+
+#### Database Views
+Create and manage database views for frequently used complex queries. Views can:
+- Simplify complex JOIN operations
+- Create reusable query logic
+- Be accessed like regular tables in the SQL editor
+- Be managed (created, viewed, deleted) through the Views tab
+
+![SDAS Data Access View Support](./images/view.png)
+
+Views are particularly useful for:
+- Standardizing common queries across teams
+- Hiding complexity from business users
+- Creating virtual tables from multiple sources
+- Implementing row-level security patterns
+
+#### Additional Access Methods
+For advanced users, SDAS data can also be accessed through:
+- Amazon Athena Console directly
+- ODBC/JDBC drivers for BI tools (Tableau, Power BI, etc.)
+- AWS CLI and SDKs
+
+#### Language Support
+SDAS provides complete bilingual support (English/Portuguese) with a language selector in the navigation bar. Language preference is automatically saved and persists across sessions.
 
 ### 4.5. Object Lock
 
@@ -208,7 +244,7 @@ This section covers data type conversions that SDAS processes between PostgreSQL
 | macaddr                     | Y          | string         |
 | macaddr8                    | Y          | string         |
 | money                       | Y          | decimal(19,4)  |
-| numeric                     | Y          | decimal(38,18) |
+| numeric                     | Y          | decimal(18,4) |
 | path                        | Y          | string         |
 | pg_lsn                      | Y          | string         |
 | pg_snapshot                 | Y          | string         |

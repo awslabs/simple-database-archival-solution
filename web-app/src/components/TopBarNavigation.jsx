@@ -1,5 +1,5 @@
 /**
- * Copyright 2023 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+ * Copyright 2025 Amazon.com, Inc. and its affiliates. All Rights Reserved.
  *
  * Licensed under the Amazon Software License (the "License").
  * You may not use this file except in compliance with the License.
@@ -17,10 +17,13 @@ import { useState, useEffect } from 'react';
 import TopNavigation from '@cloudscape-design/components/top-navigation';
 import { applyMode, Mode } from '@cloudscape-design/global-styles';
 import { Auth } from 'aws-amplify';
+import { useTranslation } from 'react-i18next';
+import i18n from '../i18n';
 
 const i18nStrings = {};
 
 export function TopBarNavigation() {
+	const { t } = useTranslation();
 	const [darkMode, setDarkMode] = useState(false);
 	const [user, setUser] = useState('');
 
@@ -82,10 +85,10 @@ export function TopBarNavigation() {
 			i18nStrings={i18nStrings}
 			identity={{
 				href: '/',
-				title: 'Simple Database Archival Solution',
+				title: t('archive.title'),
 				logo: {
 					src: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c3ZnIGlkPSJMYXllcl8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMSIgaGVpZ2h0PSIzMSIgdmlld0JveD0iMCAwIDMxIDMxIj48ZGVmcz48c3R5bGU+LmNscy0xe2ZpbGw6IzhiY2E4Mjt9LmNscy0ye2ZpbGw6I2YyOWUzNzt9LmNscy0ze2ZpbGw6I2NlM2Y2MDt9LmNscy00e2ZpbGw6I2JjZTNkZTt9LmNscy01e2ZpbGw6I2UwNzliMDt9LmNscy02e2ZpbGw6I2YzYjA5Yjt9LmNscy03e2ZpbGw6IzZiNjRhZDt9PC9zdHlsZT48L2RlZnM+PHJlY3QgaWQ9IlJlY3RhbmdsZSIgY2xhc3M9ImNscy01IiB4PSIyMy4wNCIgd2lkdGg9IjcuOTYiIGhlaWdodD0iOC40NSIvPjxyZWN0IGlkPSJSZWN0YW5nbGUtQ29weSIgY2xhc3M9ImNscy0xIiB4PSIyMy4wNCIgeT0iMTEuMjgiIHdpZHRoPSI3Ljk2IiBoZWlnaHQ9IjguNDUiLz48cmVjdCBpZD0iUmVjdGFuZ2xlLUNvcHktMiIgY2xhc3M9ImNscy0yIiB4PSIyMy4wNCIgeT0iMjIuNTUiIHdpZHRoPSI3Ljk2IiBoZWlnaHQ9IjguNDUiLz48cmVjdCBpZD0iUmVjdGFuZ2xlLTIiIGNsYXNzPSJjbHMtNCIgeD0iMTEuNTEiIHdpZHRoPSI3Ljk2IiBoZWlnaHQ9IjguNDUiLz48cmVjdCBpZD0iUmVjdGFuZ2xlLUNvcHktMiIgY2xhc3M9ImNscy0zIiB4PSIxMS41MSIgeT0iMTEuMjgiIHdpZHRoPSI3Ljk2IiBoZWlnaHQ9IjguNDUiLz48cmVjdCBpZD0iUmVjdGFuZ2xlLUNvcHktMi0yIiBjbGFzcz0iY2xzLTYiIHg9IjExLjUxIiB5PSIyMi41NSIgd2lkdGg9IjcuOTYiIGhlaWdodD0iOC40NSIvPjxyZWN0IGlkPSJSZWN0YW5nbGUtMyIgY2xhc3M9ImNscy0xIiB3aWR0aD0iNy45NiIgaGVpZ2h0PSI4LjQ1Ii8+PHJlY3QgaWQ9IlJlY3RhbmdsZS1Db3B5LTMiIGNsYXNzPSJjbHMtNyIgeT0iMTEuMjgiIHdpZHRoPSI3Ljk2IiBoZWlnaHQ9IjguNDUiLz48cmVjdCBpZD0iUmVjdGFuZ2xlLUNvcHktMi0zIiBjbGFzcz0iY2xzLTMiIHk9IjIyLjU1IiB3aWR0aD0iNy45NiIgaGVpZ2h0PSI4LjQ1Ii8+PC9zdmc+',
-					alt: 'Simple Database Archival Solution',
+					alt: t('archive.title'),
 				},
 			}}
 			utilities={[
@@ -94,8 +97,8 @@ export function TopBarNavigation() {
 					variant: 'primary',
 					href: '/add-archive',
 					iconName: 'add-plus',
-					text: '   Add Archive',
-					title: '   Add Archive',
+					text: '   ' + t('navigation.addArchive'),
+					title: '   ' + t('navigation.addArchive'),
 				},
 				{
 					type: 'button',
@@ -136,6 +139,29 @@ export function TopBarNavigation() {
 					),
 					text: darkMode ? '   Light Mode' : '   Dark Mode',
 					title: darkMode ? '   Light Mode' : '   Dark Mode',
+				},
+				{
+					type: 'menu-dropdown',
+					text: i18n.language === 'en' ? 'EN' : 'PT',
+					description: t('language.selectLanguage'),
+					iconName: 'settings',
+					onItemClick: (e) => {
+						if (e.detail.id === 'lang-en') {
+							i18n.changeLanguage('en');
+						} else if (e.detail.id === 'lang-pt') {
+							i18n.changeLanguage('pt');
+						}
+					},
+					items: [
+						{
+							id: 'lang-en',
+							text: t('language.english'),
+						},
+						{
+							id: 'lang-pt',
+							text: t('language.portuguese'),
+						},
+					],
 				},
 				{
 					type: 'menu-dropdown',

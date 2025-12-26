@@ -20,7 +20,6 @@
 		"typeRoots": ["./node_modules/@types"],
 
 		//-----------------------------------------------------
-		"suppressImplicitAnyIndexErrors": true,
 		"strictNullChecks": true
 	},
 	"type": "module",

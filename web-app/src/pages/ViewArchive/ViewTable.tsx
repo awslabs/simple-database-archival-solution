@@ -1,5 +1,5 @@
 /**
- * Copyright 2023 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+ * Copyright 2025 Amazon.com, Inc. and its affiliates. All Rights Reserved.
  *
  * Licensed under the Amazon Software License (the "License").
  * You may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import {
 	Cards,
 } from '@cloudscape-design/components';
 import { useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
 	CARD_INFORMATION_DEFINITION,
 	REQUEST_EXECUTION_COLUMN_DEFINITION,
@@ -71,6 +72,7 @@ export function ViewTable(
 		setArchiveState: any;
 	}
 ) {
+	const { t } = useTranslation();
 	const [name, setName] = useState('');
 	const [toolsOpen, setToolsOpen] = useState(false);
 	const [loading, setLoading] = useState(true);
@@ -123,18 +125,18 @@ export function ViewTable(
 		filtering: {
 			empty: (
 				<EmptyState
-					title="No instances"
-					subtitle="No instances to display."
-					action={<Button>Create instance</Button>}
+					title={t('common.noInstances')}
+					subtitle={t('common.noInstancesToDisplay')}
+					action={<Button>{t('common.createInstance')}</Button>}
 				/>
 			),
 			noMatch: (
 				<EmptyState
-					title="No matches"
-					subtitle="We can’t find a match."
+					title={t('common.noMatches')}
+					subtitle={t('common.noMatchesSubtitle')}
 					action={
 						<Button onClick={() => actions.setFiltering('')}>
-							Clear filter
+							{t('common.clearFilter')}
 						</Button>
 					}
 				/>
@@ -154,7 +156,7 @@ export function ViewTable(
 					columnDefinitions={REQUEST_EXECUTION_COLUMN_DEFINITION}
 					selectedItems={selectedItems}
 					loading={loading}
-					loadingText="Loading Tables"
+					loadingText={t('tables.loadingTables')}
 					selectionType="single"
 					onSelectionChange={(event) => {
 						setIsSelected(true);
@@ -164,19 +166,19 @@ export function ViewTable(
 					}}
 					empty={
 						<Box textAlign="center" color="inherit">
-							<b>No resources</b>
+							<b>{t('tables.loadingResources')}</b>
 							<Box
 								padding={{ bottom: 's' }}
 								variant="p"
 								color="inherit"
 							>
-								No resources to display.
+								{t('dataAccess.noResourcesToDisplay')}
 							</Box>
 						</Box>
 					}
 					header={
 						<TableHeader
-							title="Table Description"
+							title={t('tables.tableDescription')}
 							selectedItems={selectedItems}
 							totalItems={data}
 							selectionType="single"
@@ -195,7 +197,7 @@ export function ViewTable(
 										iconAlign="right"
 										iconName="refresh"
 									>
-										Refresh
+										{t('common.refresh')}
 									</Button>
 								</SpaceBetween>
 							}
@@ -211,8 +213,8 @@ export function ViewTable(
 					filter={
 						<TextFilter
 							{...filterProps}
-							filteringAriaLabel="Filter Tables"
-							filteringPlaceholder="Find Tables"
+							filteringAriaLabel={t('tables.filterTables')}
+							filteringPlaceholder={t('tables.findTables')}
 						/>
 					}
 				/>
@@ -231,7 +233,9 @@ export function ViewTable(
 								id: 'description',
 								content: (e) => {
 									return (
-										<ExpandableSection header="Table Schema">
+										<ExpandableSection
+											header={t('tables.tableSchema')}
+										>
 											<Table
 												columnDefinitions={
 													CARD_INFORMATION_DEFINITION
@@ -239,7 +243,9 @@ export function ViewTable(
 												items={
 													selectedItems[0]['schema']
 												}
-												loadingText="Loading resources"
+												loadingText={t(
+													'tables.loadingResources'
+												)}
 												sortingDisabled
 												variant="embedded"
 												empty={
@@ -247,7 +253,11 @@ export function ViewTable(
 														textAlign="center"
 														color="inherit"
 													>
-														<b>No resources</b>
+														<b>
+															{t(
+																'dataAccess.noResources'
+															)}
+														</b>
 														<Box
 															padding={{
 																bottom: 's',
@@ -255,8 +265,9 @@ export function ViewTable(
 															variant="p"
 															color="inherit"
 														>
-															No resources to
-															display.
+															{t(
+																'dataAccess.noResourcesToDisplay'
+															)}
 														</Box>
 													</Box>
 												}
@@ -276,8 +287,8 @@ export function ViewTable(
 					}}
 					cardsPerRow={[{ cards: 1 }, { minWidth: 500, cards: 1 }]}
 					items={isSelected ? selectedItems : []}
-					loadingText="Loading Schema"
-					header={<Header>Schema Information</Header>}
+					loadingText={t('tables.loadingSchema')}
+					header={<Header>{t('tables.schemaInformation')}</Header>}
 				/>
 			</SpaceBetween>
 		</>

@@ -1,5 +1,5 @@
 /**
- * Copyright 2023 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+ * Copyright 2025 Amazon.com, Inc. and its affiliates. All Rights Reserved.
  *
  * Licensed under the Amazon Software License (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,43 +15,41 @@
 
 import { useHistory } from 'react-router-dom';
 import { SideNavigation, Grid } from '@cloudscape-design/components';
+import { useTranslation } from 'react-i18next';
 
-export const navHeader = { text: 'Data Archive', href: '/' };
-
-export const navItems = [
-	{
-		type: 'link',
-		text: 'Home',
-		href: '/',
-	},
-
-	{
-		type: 'link',
-		text: 'Add Archive',
-		href: '/add-archive',
-	},
-];
-
-const defaultOnFollowHandler = (ev) => {
-	ev.preventDefault();
-	LinkTo();
-};
-
-function LinkTo(ev) {
+export function SideBarNavigation({ activeHref }) {
 	const history = useHistory();
-}
+	const { t } = useTranslation();
 
-export function SideBarNavigation({
-	activeHref,
-	header = navHeader,
-	items = navItems,
-	onFollowHandler = defaultOnFollowHandler,
-}) {
+	const onFollowHandler = (ev) => {
+		ev.preventDefault();
+		if (ev.detail.href) {
+			history.push(ev.detail.href);
+		}
+	};
+
+	// Navigation header
+	const navHeader = { text: t('navigation.dataArchive'), href: '/' };
+
+	// Navigation items
+	const navItems = [
+		{
+			type: 'link',
+			text: t('navigation.home'),
+			href: '/',
+		},
+		{
+			type: 'link',
+			text: t('navigation.addArchive'),
+			href: '/add-archive',
+		},
+	];
+
 	return (
 		<>
 			<SideNavigation
-				items={items}
-				header={header}
+				items={navItems}
+				header={navHeader}
 				activeHref={activeHref}
 				onFollow={onFollowHandler}
 			/>

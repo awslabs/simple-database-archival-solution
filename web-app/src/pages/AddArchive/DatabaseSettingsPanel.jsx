@@ -1,5 +1,5 @@
 /**
- * Copyright 2023 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+ * Copyright 2025 Amazon.com, Inc. and its affiliates. All Rights Reserved.
  *
  * Licensed under the Amazon Software License (the "License").
  * You may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import {
 	StatusIndicator,
 } from '@cloudscape-design/components';
 import { API } from 'aws-amplify';
+import { useTranslation } from 'react-i18next';
 
 const defaultState = {
 	sslCertificate: 'default',
@@ -50,6 +51,7 @@ export default function DatabaseSettingsPanel({
 	updateDirty = noop,
 	readOnlyWithErrors = false,
 }) {
+	const { t } = useTranslation();
 	const [archivePanelData, setArchivePanelData] = useState(defaultState);
 
 	// Database test connection
@@ -123,14 +125,16 @@ export default function DatabaseSettingsPanel({
 	return (
 		<Container
 			id="distribution-panel"
-			header={<Header variant="h2">Database Settings</Header>}
+			header={
+				<Header variant="h2">{t('addArchive.databaseSettings')}</Header>
+			}
 		>
 			<SpaceBetween size="l">
 				<FormField
-					label="Archive Name"
-					description="Enter a name for the archive to easily reference."
+					label={t('addArchive.archiveName')}
+					description={t('addArchive.archiveNameDescription')}
 					errorText={getErrorText('You must specify a root object.')}
-					i18nStrings={{ errorIconAriaLabel: 'Error' }}
+					i18nStrings={{ errorIconAriaLabel: t('errors.general') }}
 				>
 					<Input
 						value={archivePanelData.archiveName}
@@ -143,10 +147,10 @@ export default function DatabaseSettingsPanel({
 				</FormField>
 
 				<FormField
-					label="Hostname"
-					description="Enter the hostname of the database."
+					label={t('addArchive.hostname')}
+					description={t('addArchive.hostnameDescription')}
 					errorText={getErrorText('You must specify a root object.')}
-					i18nStrings={{ errorIconAriaLabel: 'Error' }}
+					i18nStrings={{ errorIconAriaLabel: t('errors.general') }}
 				>
 					<Input
 						value={archivePanelData.databaseHostname}
@@ -159,10 +163,10 @@ export default function DatabaseSettingsPanel({
 				</FormField>
 
 				<FormField
-					label="Database Name"
-					description="Enter a the name of the database."
+					label={t('addArchive.databaseName')}
+					description={t('addArchive.databaseNameDescription')}
 					errorText={getErrorText('You must specify a root object.')}
-					i18nStrings={{ errorIconAriaLabel: 'Error' }}
+					i18nStrings={{ errorIconAriaLabel: t('errors.general') }}
 				>
 					<Input
 						value={archivePanelData.databaseName}
@@ -178,17 +182,19 @@ export default function DatabaseSettingsPanel({
 					stretch={true}
 					label={
 						<span id="certificate-expiry-label">
-							Authentication
+							{t('addArchive.authentication')}
 						</span>
 					}
 				>
 					<SpaceBetween size="s" direction="horizontal">
 						<FormField
 							stretch={true}
-							description="Enter the username for the connection."
+							description={t('addArchive.usernameDescription')}
 							className="date-time-container"
 							errorText={getErrorText('Invalid time format.')}
-							i18nStrings={{ errorIconAriaLabel: 'Error' }}
+							i18nStrings={{
+								errorIconAriaLabel: t('errors.general'),
+							}}
 						>
 							<Input
 								value={archivePanelData.databaseUsername}
@@ -201,10 +207,12 @@ export default function DatabaseSettingsPanel({
 						</FormField>
 						<FormField
 							stretch={true}
-							description="Enter the password for the connection."
+							description={t('addArchive.passwordDescription')}
 							className="date-time-container"
 							errorText={getErrorText('Invalid time format.')}
-							i18nStrings={{ errorIconAriaLabel: 'Error' }}
+							i18nStrings={{
+								errorIconAriaLabel: t('errors.general'),
+							}}
 						>
 							<Input
 								value={archivePanelData.databasePassword}
@@ -224,14 +232,16 @@ export default function DatabaseSettingsPanel({
 						stretch={true}
 						label={
 							<span id="certificate-expiry-label">
-								Oracle Owner
+								{t('addArchive.oracleOwner')}
 							</span>
 						}
 					>
 						<SpaceBetween size="s" direction="horizontal">
 							<FormField
 								stretch={true}
-								description="Enter the username for the Oracle owner."
+								description={t(
+									'addArchive.oracleOwnerDescription'
+								)}
 							>
 								<Input
 									autoComplete={false}
@@ -252,17 +262,23 @@ export default function DatabaseSettingsPanel({
 				<FormField
 					stretch={true}
 					label={
-						<span id="certificate-expiry-label">Database Port</span>
+						<span id="certificate-expiry-label">
+							{t('addArchive.databasePort')}
+						</span>
 					}
 				>
 					<SpaceBetween size="s" direction="horizontal">
 						<FormField
 							stretch={true}
-							description="Enter the port number of the database."
+							description={t(
+								'addArchive.databasePortDescription'
+							)}
 							className="date-time-container"
 							// constraintText={'Use YYYY/MM/DD format.'}
 							errorText={getErrorText('Invalid time format.')}
-							i18nStrings={{ errorIconAriaLabel: 'Error' }}
+							i18nStrings={{
+								errorIconAriaLabel: t('errors.general'),
+							}}
 						>
 							<Input
 								autoComplete={false}
@@ -290,8 +306,8 @@ export default function DatabaseSettingsPanel({
 				</FormField>
 
 				<FormField
-					label="Database Mode"
-					description="For the archive process to work, its require to have the database is read only mode"
+					label={t('addArchive.databaseMode')}
+					description={t('addArchive.databaseModeWarning')}
 					stretch={true}
 				>
 					<RadioGroup
@@ -301,10 +317,10 @@ export default function DatabaseSettingsPanel({
 						value={archivePanelData.databaseMode}
 						ariaRequired={true}
 						items={[
-							{ value: 'Read', label: 'Read' },
+							{ value: 'Read', label: t('addArchive.readMode') },
 							{
 								value: 'Read and Write',
-								label: 'Read and Write',
+								label: t('addArchive.readAndWriteMode'),
 							},
 						]}
 					/>
@@ -313,11 +329,11 @@ export default function DatabaseSettingsPanel({
 				{databaseTestExecuted ? (
 					databaseConnected ? (
 						<StatusIndicator type="success">
-							Connection Successfully
+							{t('addArchive.connectionSuccess')}
 						</StatusIndicator>
 					) : (
 						<StatusIndicator type="error">
-							Connection Failed
+							{t('addArchive.connectionFailed')}
 						</StatusIndicator>
 					)
 				) : (
@@ -334,7 +350,7 @@ export default function DatabaseSettingsPanel({
 						onClick={testConnection}
 						variant="primary"
 					>
-						Test Connection
+						{t('addArchive.testConnection')}
 					</Button>
 				)}
 			</SpaceBetween>

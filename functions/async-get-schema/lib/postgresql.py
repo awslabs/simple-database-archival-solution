@@ -1,5 +1,5 @@
 """ 
-Copyright 2024 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+Copyright 2025 Amazon.com, Inc. and its affiliates. All Rights Reserved.
 
 Licensed under the Amazon Software License (the "License").
 You may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ def convert_schema(data_type, udt_name=None):
         "macaddr": "string",
         "macaddr8": "string",
         "money": "decimal(19,4)",
-        "numeric": "decimal(38,18)",
+        "numeric": "decimal(18,4)",
         "path": "string",
         "pg_lsn": "string",
         "pg_snapshot": "string",

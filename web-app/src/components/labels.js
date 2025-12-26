@@ -1,5 +1,5 @@
 /**
- * Copyright 2023 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+ * Copyright 2025 Amazon.com, Inc. and its affiliates. All Rights Reserved.
  *
  * Licensed under the Amazon Software License (the "License").
  * You may not use this file except in compliance with the License.
@@ -13,14 +13,17 @@
  * permissions and limitations under the License.
  */
 
+import i18n from '../i18n';
+
 export const paginationLabels = {
-	nextPageLabel: 'Next page',
-	previousPageLabel: 'Previous page',
-	pageLabel: (pageNumber) => `Page ${pageNumber} of all pages`,
+	nextPageLabel: i18n.t('pagination.nextPage'),
+	previousPageLabel: i18n.t('pagination.previousPage'),
+	pageLabel: (pageNumber) => i18n.t('pagination.pageLabel', { pageNumber }),
 };
 
 export const originsSelectionLabels = {
-	itemSelectionLabel: (data, row) => `select ${row.name}`,
-	allItemsSelectionLabel: () => 'select all',
-	selectionGroupLabel: 'Origins selection',
+	itemSelectionLabel: (data, row) =>
+		i18n.t('selection.selectItem', { name: row.name }),
+	allItemsSelectionLabel: () => i18n.t('selection.selectAll'),
+	selectionGroupLabel: i18n.t('selection.selectionGroup'),
 };

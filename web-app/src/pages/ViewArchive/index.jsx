@@ -1,5 +1,5 @@
 /**
- * Copyright 2023 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+ * Copyright 2025 Amazon.com, Inc. and its affiliates. All Rights Reserved.
  *
  * Licensed under the Amazon Software License (the "License").
  * You may not use this file except in compliance with the License.
@@ -44,6 +44,8 @@ import { ViewCompliance } from './ViewCompliance';
 import { ViewTable } from './ViewTable';
 import { ViewData } from './ViewDataAccess';
 import { ViewJobs } from './ViewJobs';
+import { ViewViews } from './ViewViews';
+import { useTranslation } from 'react-i18next';
 
 function EmptyState({ title, subtitle, action }) {
 	return (
@@ -60,6 +62,7 @@ function EmptyState({ title, subtitle, action }) {
 }
 
 function ViewArchive() {
+	const { t } = useTranslation();
 	let job = useParams();
 	let archive = useParams();
 
@@ -144,7 +147,7 @@ function ViewArchive() {
 
 	const tabs = [
 		{
-			label: 'Table',
+			label: t('tabs.table'),
 			id: 'request',
 			content: (
 				<ViewTable
@@ -155,7 +158,7 @@ function ViewArchive() {
 		},
 
 		{
-			label: 'Jobs',
+			label: t('tabs.jobs'),
 			id: 'jobs',
 			content: (
 				<ViewJobs
@@ -166,7 +169,7 @@ function ViewArchive() {
 		},
 
 		{
-			label: 'Validation',
+			label: t('tabs.validation'),
 			id: 'validation',
 			content: (
 				<ValidationTable
@@ -177,7 +180,7 @@ function ViewArchive() {
 		},
 
 		{
-			label: 'Compliance',
+			label: t('tabs.compliance'),
 			id: 'compliance',
 			content: (
 				<ViewCompliance
@@ -189,10 +192,20 @@ function ViewArchive() {
 			),
 		},
 		{
-			label: 'Data Access',
+			label: t('tabs.dataAccess'),
 			id: 'dataaccess',
 			content: (
 				<ViewData
+					archiveState={archiveState}
+					setArchiveState={setArchiveState}
+				/>
+			),
+		},
+		{
+			label: t('tabs.views'),
+			id: 'views',
+			content: (
+				<ViewViews
 					archiveState={archiveState}
 					setArchiveState={setArchiveState}
 				/>
@@ -211,18 +224,18 @@ function ViewArchive() {
 		filtering: {
 			empty: (
 				<EmptyState
-					title="No instances"
-					subtitle="No instances to display."
-					action={<Button>Create instance</Button>}
+					title={t('common.noInstances')}
+					subtitle={t('common.noInstancesToDisplay')}
+					action={<Button>{t('common.createInstance')}</Button>}
 				/>
 			),
 			noMatch: (
 				<EmptyState
-					title="No matches"
-					subtitle="We can’t find a match."
+					title={t('common.noMatches')}
+					subtitle={t('common.noMatchesSubtitle')}
 					action={
 						<Button onClick={() => actions.setFiltering('')}>
-							Clear filter
+							{t('common.clearFilter')}
 						</Button>
 					}
 				/>
@@ -247,7 +260,11 @@ function ViewArchive() {
 					<SpaceBetween size="l">
 						{loading ? (
 							<Container
-								header={<Header variant="h2">Archive</Header>}
+								header={
+									<Header variant="h2">
+										{t('archive.archive')}
+									</Header>
+								}
 							>
 								<Box textAlign="center" color="inherit">
 									<Spinner size="large" />
@@ -256,7 +273,7 @@ function ViewArchive() {
 										variant="p"
 										color="inherit"
 									>
-										Loading
+										{t('common.loading')}
 									</Box>
 								</Box>
 							</Container>
@@ -278,40 +295,40 @@ function ViewArchive() {
 															: true
 													}
 												>
-													Archive
+													{t('archive.archive')}
 												</Button>
 												<Button
 													onClick={refresh}
 													iconAlign="right"
 													iconName="refresh"
 												>
-													Refresh
+													{t('common.refresh')}
 												</Button>
 											</SpaceBetween>
 										}
 										variant="h2"
 									>
-										Archive
+										{t('archive.archive')}
 									</Header>
 								}
 							>
 								<ColumnLayout columns={2} variant="text-grid">
 									<div>
 										<Box variant="awsui-key-label">
-											Hostname
+											{t('archive.hostname')}
 										</Box>
 										<div>{archiveData.Item.hostname}</div>
 									</div>
 									<div>
 										<Box variant="awsui-key-label">
-											Archive ID
+											{t('archive.archiveId')}
 										</Box>
 										<div>{job.id}</div>
 									</div>
 
 									<div>
 										<Box variant="awsui-key-label">
-											Time Submitted
+											{t('archive.timeSubmitted')}
 										</Box>
 										<div>
 											{' '}
@@ -326,30 +343,40 @@ function ViewArchive() {
 
 									<div>
 										<Box variant="awsui-key-label">
-											Archive Status
+											{t('archive.archiveStatus')}
 										</Box>
 
 										<div>
 											{' '}
 											{archiveState === 'Failed' ? (
 												<Badge color="red">
-													Failed
+													{t('archive.statusFailed')}
 												</Badge>
 											) : archiveState === 'Archiving' ? (
 												<Badge color="blue">
-													Archiving
+													{t(
+														'archive.statusArchiving'
+													)}
 												</Badge>
 											) : archiveState ===
 											  'Validating' ? (
 												<Badge color="blue">
-													Validating
+													{t(
+														'archive.statusValidating'
+													)}
 												</Badge>
 											) : archiveState ===
 											  'Archive Queue' ? (
-												<Badge>Archive Queue</Badge>
+												<Badge>
+													{t(
+														'archive.statusArchiveQueue'
+													)}
+												</Badge>
 											) : archiveState === 'Archived' ? (
 												<Badge color="green">
-													Archived
+													{t(
+														'archive.statusArchived'
+													)}
 												</Badge>
 											) : (
 												<Badge> </Badge>
@@ -359,7 +386,7 @@ function ViewArchive() {
 
 									<div>
 										<Box variant="awsui-key-label">
-											Database Engine
+											{t('archive.databaseEngine')}
 										</Box>
 										<div>
 											{archiveData.Item.database_engine}
@@ -368,7 +395,7 @@ function ViewArchive() {
 
 									<div>
 										<Box variant="awsui-key-label">
-											Database Mode
+											{t('archive.databaseMode')}
 										</Box>
 										<div>
 											{' '}
@@ -394,7 +421,7 @@ function ViewArchive() {
 					<Modal
 						onDismiss={() => closeArchiveModel()}
 						visible={archiveModal}
-						closeAriaLabel="Close modal"
+						closeAriaLabel={t('common.close')}
 						footer={
 							<Box float="right">
 								<SpaceBetween direction="horizontal" size="xs">
@@ -402,18 +429,18 @@ function ViewArchive() {
 										onClick={closeArchiveModel}
 										variant="link"
 									>
-										Cancel
+										{t('common.cancel')}
 									</Button>
 									<Button
 										onClick={archiveRequest}
 										variant="primary"
 									>
-										Archive
+										{t('archive.archive')}
 									</Button>
 								</SpaceBetween>
 							</Box>
 						}
-						header="Archive Database"
+						header={t('archive.archiveDatabase')}
 					>
 						<>
 							<SpaceBetween direction="vertical" size="xs">
@@ -425,19 +452,21 @@ function ViewArchive() {
 									items={[
 										{
 											value: 'now',
-											label: 'Run Now',
+											label: t('archive.runNow'),
 										},
 										// Scheduled for 1.1.0
 										// {
 										// 	value: "schedule",
-										// 	label: "Schedule",
+										// 	label: t('archive.schedule'),
 										// },
 									]}
 								/>
 								{archiveNow === 'schedule' ? (
 									<FormField
-										label="Scheduled Date"
-										constraintText="Use YYYY/MM/DD format."
+										label={t('archive.scheduledDate')}
+										constraintText={t(
+											'archive.scheduledDateConstraint'
+										)}
 									>
 										<DatePicker
 											// onChange={({ detail }) => setValue(detail.value)}
@@ -445,22 +474,28 @@ function ViewArchive() {
 											openCalendarAriaLabel={(
 												selectedDate
 											) =>
-												'Choose certificate expiry date' +
+												t(
+													'archive.chooseCertificateExpiryDate'
+												) +
 												(selectedDate
 													? `, selected date is ${selectedDate}`
 													: '')
 											}
-											nextMonthAriaLabel="Next month"
+											nextMonthAriaLabel={t(
+												'archive.nextMonth'
+											)}
 											placeholder="YYYY/MM/DD"
-											previousMonthAriaLabel="Previous month"
-											todayAriaLabel="Today"
+											previousMonthAriaLabel={t(
+												'archive.previousMonth'
+											)}
+											todayAriaLabel={t('archive.today')}
 										/>
 									</FormField>
 								) : (
 									<></>
 								)}
 
-								<FormField label="Worker type">
+								<FormField label={t('archive.workerType')}>
 									<Select
 										onChange={({ detail }) =>
 											setWorkerType(detail.selectedOption)
@@ -474,8 +509,10 @@ function ViewArchive() {
 								</FormField>
 
 								<FormField
-									label="Worker Maximum Capacity"
-									description="The directory in your Amazon S3 bucket or your custom origin."
+									label={t('archive.workerMaximumCapacity')}
+									description={t(
+										'archive.workerCapacityDescription'
+									)}
 									errorText={workerCapacityError}
 								>
 									<Input
@@ -489,15 +526,21 @@ function ViewArchive() {
 												setWorkerCapacity(detail.value);
 											} else {
 												setWorkerCapacityError(
-													'Choose an integer from 2 to 100'
+													t(
+														'archive.workerCapacityError'
+													)
 												);
 												setWorkerCapacity(detail.value);
 											}
 										}}
 										value={workerCapacity}
-										placeholder="Choose an integer from 2 to 100"
+										placeholder={t(
+											'archive.workerCapacityPlaceholder'
+										)}
 										i18nStrings={{
-											errorIconAriaLabel: 'Error',
+											errorIconAriaLabel: t(
+												'archive.errorIconAriaLabel'
+											),
 										}}
 									/>
 								</FormField>

@@ -1,5 +1,5 @@
 /**
- * Copyright 2023 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+ * Copyright 2025 Amazon.com, Inc. and its affiliates. All Rights Reserved.
  *
  * Licensed under the Amazon Software License (the "License").
  * You may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import {
 	StatusIndicator,
 } from '@cloudscape-design/components';
 import { API } from 'aws-amplify';
+import { useTranslation } from 'react-i18next';
 
 export default function TableDetailsPanel({
 	databaseConnectionState,
@@ -34,6 +35,7 @@ export default function TableDetailsPanel({
 	databaseConnected,
 	setGetTables,
 }) {
+	const { t } = useTranslation();
 	const [tables, setTables] = useState([]);
 	const [selectedItems] = useState([]);
 	const [pageCount, setPageCount] = useState(0);
@@ -119,39 +121,48 @@ export default function TableDetailsPanel({
 				sections: [
 					{
 						id: 'description',
-						header: (e) => (e.oracle_owner ? 'Oracle Owner' : ''),
+						header: (e) =>
+							e.oracle_owner ? t('addArchive.oracleOwner') : '',
 						content: (e) => (e.oracle_owner ? e.oracle_owner : ''),
 					},
 					{
 						id: 'table',
 						content: (e) => {
 							return (
-								<ExpandableSection header="Table Schema">
+								<ExpandableSection
+									header={t('tables.tableSchema')}
+								>
 									<Table
 										columnDefinitions={[
 											{
 												id: 'key',
-												header: 'Field',
+												header: t('tables.field'),
 												cell: (e) => e.key || '',
 												sortingField: 'name',
 											},
 											{
 												id: 'origin_type',
-												header: 'Source Data Type',
+												header: t(
+													'tables.sourceDataType'
+												),
 												cell: (item) =>
 													item.origin_type || '',
 												sortingField: 'origin_type',
 											},
 											{
 												id: 'alt',
-												header: 'Target Data Type',
+												header: t(
+													'tables.targetDataType'
+												),
 												cell: (item) =>
 													item.value || '',
 												sortingField: 'alt',
 											},
 										]}
 										items={e.schema}
-										loadingText="Loading resources"
+										loadingText={t(
+											'tables.loadingResources'
+										)}
 										sortingDisabled
 										variant="embedded"
 										empty={
@@ -159,13 +170,19 @@ export default function TableDetailsPanel({
 												textAlign="center"
 												color="inherit"
 											>
-												<b>No resources</b>
+												<b>
+													{t(
+														'validationPage.noResources'
+													)}
+												</b>
 												<Box
 													padding={{ bottom: 's' }}
 													variant="p"
 													color="inherit"
 												>
-													No resources to display.
+													{t(
+														'validationPage.noResourcesToDisplay'
+													)}
 												</Box>
 											</Box>
 										}
@@ -184,7 +201,7 @@ export default function TableDetailsPanel({
 			}}
 			cardsPerRow={[{ cards: 1 }, { minWidth: 500, cards: 1 }]}
 			items={tables[currentPageIndex - 1]}
-			loadingText="Loading Schema"
+			loadingText={t('tables.loadingSchema')}
 			visibleSections={['description', 'table', 'size']}
 			header={
 				<Header
@@ -201,7 +218,7 @@ export default function TableDetailsPanel({
 						<SpaceBetween direction="vertical" size="xs">
 							{gettingSchemaFailed ? (
 								<StatusIndicator type="error">
-									Failed to Fetch Tables
+									{t('addArchive.failedToFetchTables')}
 								</StatusIndicator>
 							) : (
 								<></>
@@ -218,14 +235,14 @@ export default function TableDetailsPanel({
 										onClick={getDatabaseSchema}
 										variant="primary"
 									>
-										Fetch Tables
+										{t('addArchive.fetchTables')}
 									</Button>
 								)}
 							</SpaceBetween>
 						</SpaceBetween>
 					}
 				>
-					Table Details
+					{t('addArchive.tableDetails')}
 				</Header>
 			}
 			pagination={

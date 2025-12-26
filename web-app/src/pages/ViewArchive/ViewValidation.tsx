@@ -1,5 +1,5 @@
 /**
- * Copyright 2023 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+ * Copyright 2025 Amazon.com, Inc. and its affiliates. All Rights Reserved.
  *
  * Licensed under the Amazon Software License (the "License").
  * You may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import {
 	CodeEditorProps,
 } from '@cloudscape-design/components';
 import { useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { VALIDATION_TABLE_EXECUTION_COLUMN_DEFINITION } from './details-config';
 // import '../../styles/base.scss';
 // import '../../styles/top-navigation.scss';
@@ -71,6 +72,7 @@ export function ValidationTable(
 		setArchiveState: any;
 	}
 ) {
+	const { t } = useTranslation();
 	const [name, setName] = useState('');
 	const [toolsOpen, setToolsOpen] = useState(false);
 	const [loading, setLoading] = useState(true);
@@ -126,18 +128,20 @@ export function ValidationTable(
 		filtering: {
 			empty: (
 				<EmptyState
-					title="No instances"
-					subtitle="No instances to display."
-					action={<Button>Create instance</Button>}
+					title={t('validationPage.noInstances')}
+					subtitle={t('validationPage.noInstancesToDisplay')}
+					action={
+						<Button>{t('validationPage.createInstance')}</Button>
+					}
 				/>
 			),
 			noMatch: (
 				<EmptyState
-					title="No matches"
-					subtitle="We can’t find a match."
+					title={t('validationPage.noMatches')}
+					subtitle={t('validationPage.noMatchesSubtitle')}
 					action={
 						<Button onClick={() => actions.setFiltering('')}>
-							Clear filter
+							{t('validationPage.clearFilter')}
 						</Button>
 					}
 				/>
@@ -166,8 +170,6 @@ export function ValidationTable(
 					.then(() => {
 						ace.config.set('useStrictCSP', true);
 						ace.config.set('loadWorkerFromBlob', false);
-						ace.config.set('readOnly', true);
-						ace.config.set('maxLines', 0);
 
 						// ace.config.set('basePath', '/app/');
 						setAce(ace);
@@ -195,13 +197,13 @@ export function ValidationTable(
 		const validatingindicator = archiveState === 'Validating';
 
 		if (!isSelected) {
-			return 'Please select a table';
+			return t('validationPage.selectTable');
 		} else if (isSelected && validationQueueindicator) {
 			if (
 				Object.values(selectedItems[0][validationName]).length === 0 ||
 				selectedItems[0][validationName]['results'].length === 0
 			) {
-				return 'This Validation Is Not Available';
+				return t('validationPage.notAvailable');
 			} else {
 				console.log(selectedItems[0]);
 				return (
@@ -217,34 +219,43 @@ export function ValidationTable(
 				);
 			}
 		} else if (validatingindicator) {
-			return 'Validation In-progress';
+			return t('validationPage.inProgress');
 		} else {
-			return 'Validation Is Not Ready';
+			return t('validationPage.notReady');
 		}
 	}
 
 	const i18nStrings = {
-		loadingState: 'Loading code editor',
-		errorState: 'There was an error loading the code editor.',
-		errorStateRecovery: 'Retry',
+		loadingState: t('validationPage.codeEditorLoading'),
+		errorState: t('validationPage.codeEditorError'),
+		errorStateRecovery: t('validationPage.retry'),
 
-		editorGroupAriaLabel: 'Code editor',
-		statusBarGroupAriaLabel: 'Status bar',
+		editorGroupAriaLabel: t('validationPage.editorGroupAriaLabel'),
+		statusBarGroupAriaLabel: t('validationPage.statusBarGroupAriaLabel'),
 
-		cursorPosition: (row: any, column: any) => `Ln ${row}, Col ${column}`,
-		errorsTab: 'Errors',
-		warningsTab: 'Warnings',
-		preferencesButtonAriaLabel: 'Preferences',
+		cursorPosition: (row: any, column: any) =>
+			t('validationPage.cursorPosition', { row, column }),
+		errorsTab: t('validationPage.errorsTab'),
+		warningsTab: t('validationPage.warningsTab'),
+		preferencesButtonAriaLabel: t(
+			'validationPage.preferencesButtonAriaLabel'
+		),
 
-		paneCloseButtonAriaLabel: 'Close',
+		paneCloseButtonAriaLabel: t('validationPage.paneCloseButtonAriaLabel'),
 
-		preferencesModalHeader: 'Preferences',
-		preferencesModalCancel: 'Cancel',
-		preferencesModalConfirm: 'Confirm',
-		preferencesModalWrapLines: 'Wrap lines',
-		preferencesModalTheme: 'Theme',
-		preferencesModalLightThemes: 'Light themes',
-		preferencesModalDarkThemes: 'Dark themes',
+		preferencesModalHeader: t('validationPage.preferencesModalHeader'),
+		preferencesModalCancel: t('validationPage.preferencesModalCancel'),
+		preferencesModalConfirm: t('validationPage.preferencesModalConfirm'),
+		preferencesModalWrapLines: t(
+			'validationPage.preferencesModalWrapLines'
+		),
+		preferencesModalTheme: t('validationPage.preferencesModalTheme'),
+		preferencesModalLightThemes: t(
+			'validationPage.preferencesModalLightThemes'
+		),
+		preferencesModalDarkThemes: t(
+			'validationPage.preferencesModalDarkThemes'
+		),
 	};
 
 	return (
@@ -258,7 +269,7 @@ export function ValidationTable(
 					}
 					selectedItems={selectedItems}
 					loading={loading}
-					loadingText="Loading Tables"
+					loadingText={t('validationPage.loadingTables')}
 					selectionType="single"
 					onSelectionChange={({ detail }) => {
 						setIsSelected(true);
@@ -266,19 +277,19 @@ export function ValidationTable(
 					}}
 					empty={
 						<Box textAlign="center" color="inherit">
-							<b>No resources</b>
+							<b>{t('validationPage.noResources')}</b>
 							<Box
 								padding={{ bottom: 's' }}
 								variant="p"
 								color="inherit"
 							>
-								No resources to display.
+								{t('validationPage.noResourcesToDisplay')}
 							</Box>
 						</Box>
 					}
 					header={
 						<TableHeader
-							title="Table Description"
+							title={t('tables.tableDescription')}
 							selectedItems={selectedItems}
 							totalItems={data}
 							selectionType="single"
@@ -300,7 +311,7 @@ export function ValidationTable(
 										iconAlign="right"
 										iconName="refresh"
 									>
-										Refresh
+										{t('common.refresh')}
 									</Button>
 								</SpaceBetween>
 							}
@@ -316,13 +327,19 @@ export function ValidationTable(
 					filter={
 						<TextFilter
 							{...filterProps}
-							filteringAriaLabel="Filter Validations"
-							filteringPlaceholder="Find Validations"
+							filteringAriaLabel={t(
+								'validationPage.filterValidations'
+							)}
+							filteringPlaceholder={t(
+								'validationPage.findValidations'
+							)}
 						/>
 					}
 				/>
 
-				<ExpandableSection header="Validation Results">
+				<ExpandableSection
+					header={t('validationPage.validationResults')}
+				>
 					<SpaceBetween size="l">
 						<CodeEditor
 							ace={ace}

@@ -1,5 +1,5 @@
 /**
- * Copyright 2023 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+ * Copyright 2025 Amazon.com, Inc. and its affiliates. All Rights Reserved.
  *
  * Licensed under the Amazon Software License (the "License").
  * You may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import TableDetailsPanel from './TableDetailsPanel';
 import DatabaseTypePanel from './DatabaseTypePanel';
 import DatabaseSettingsPanel from './DatabaseSettingsPanel';
 import { API } from 'aws-amplify';
+import { useTranslation } from 'react-i18next';
 
 function BaseFormContent({
 	databaseConnectionState,
@@ -34,6 +35,7 @@ function BaseFormContent({
 	getTables,
 	errorText = null,
 }) {
+	const { t } = useTranslation();
 	const history = useHistory();
 	const [creatingArchive, setCreatingArchive] = useState(false);
 
@@ -58,7 +60,7 @@ function BaseFormContent({
 							variant="link"
 							onClick={onCancelClick}
 						>
-							Cancel
+							{t('common.cancel')}
 						</Button>
 
 						{creatingArchive ? (
@@ -75,13 +77,13 @@ function BaseFormContent({
 								onClick={createArchive}
 								variant="primary"
 							>
-								Create archive
+								{t('addArchive.createArchive')}
 							</Button>
 						)}
 					</SpaceBetween>
 				}
 				errorText={errorText}
-				errorIconAriaLabel="Error"
+				errorIconAriaLabel={t('errors.general')}
 			>
 				{content}
 			</Form>

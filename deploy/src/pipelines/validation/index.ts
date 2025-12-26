@@ -1,5 +1,5 @@
 /**
- * Copyright 2024 Amazon.com, Inc. and its affiliates. All Rights Reserved.
+ * Copyright 2025 Amazon.com, Inc. and its affiliates. All Rights Reserved.
  *
  * Licensed under the Amazon Software License (the "License").
  * You may not use this file except in compliance with the License.
@@ -119,6 +119,20 @@ export class Validation extends Construct {
 			})
 		);
 
+		// Create explicit execution role for Lambda
+		const validationStepThreeRole = new cdk.aws_iam.Role(
+			this,
+			'ValidationStepThreeRole',
+			{
+				assumedBy: new cdk.aws_iam.ServicePrincipal('lambda.amazonaws.com'),
+				managedPolicies: [
+					cdk.aws_iam.ManagedPolicy.fromAwsManagedPolicyName(
+						'service-role/AWSLambdaBasicExecutionRole'
+					),
+				],
+			}
+		);
+
 		const stepFunctionValidationStepThree = new lambdaPython.PythonFunction(
 			this,
 			'StepFunctionValidationStepThree',
@@ -129,11 +143,8 @@ export class Validation extends Construct {
 				entry: '../step-functions/validation',
 				timeout: cdk.Duration.minutes(5),
 				environment: {},
+				role: validationStepThreeRole,
 			}
-		);
-
-		stepFunctionValidationStepThree.role?.attachInlinePolicy(
-			new Policy(this, 'StepFunctionValidationStepThreePolicy', {})
 		);
 
 		const stepFunctionValidationCount = new lambdaPython.PythonFunction(
